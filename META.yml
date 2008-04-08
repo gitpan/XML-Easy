@@ -1,0 +1,46 @@
+---
+name: XML-Easy
+version: 0.000
+author:
+  - 'Andrew Main (Zefram) <zefram@fysh.org>'
+abstract: XML processing with a clean interface
+license: perl
+resources:
+  license: http://dev.perl.org/licenses/
+requires:
+  Exporter: 0
+  Params::Classify: 0
+  base: 0
+  perl: 5.008
+  strict: 0
+  warnings: 0
+build_requires:
+  Encode: 0
+  IO::File: 0
+  Module::Build: 0
+  Params::Classify: 0
+  Scalar::Util: 0
+  Test::More: 0
+  perl: 5.008
+  strict: 0
+  utf8: 0
+  warnings: 0
+recommends:
+  Internals: 0
+  XSLoader: 0
+dynamic_config: 1
+provides:
+  XML::Easy:
+    file: lib/XML/Easy.pm
+    version: 0.000
+  XML::Easy::Element:
+    file: lib/XML/Easy/Element.pm
+    version: 0.000
+  XML::Easy::Syntax:
+    file: lib/XML/Easy/Syntax.pm
+    version: 0.000
+generated_by: Module::Build version 0.2808
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.2.html
+  version: 1.2
+distribution_type: module

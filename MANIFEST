@@ -1,0 +1,24 @@
+.cvsignore
+Build.PL
+Changes
+MANIFEST
+META.yml
+Makefile.PL
+README
+lib/XML/.cvsignore
+lib/XML/Easy.pm
+lib/XML/Easy.xs
+lib/XML/Easy/Element.pm
+lib/XML/Easy/Syntax.pm
+t/element.t
+t/pod_cvg.t
+t/pod_syn.t
+t/read.data
+t/read.t
+t/read_pp.t
+t/setup_pp.pl
+t/syntax.t
+t/write.data
+t/write.t
+t/write_pp.t
+SIGNATURE    Added here by Module::Build

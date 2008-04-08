@@ -1,0 +1,51 @@
+NAME
+
+XML::Easy - XML processing with a clean interface
+
+DESCRIPTION
+
+This distribution includes modules relating to the processing, parsing,
+and serialisation of XML data.  It is oriented towards the use of XML
+to represent data for interchange purposes, rather than the use of XML
+as markup of principally textual data.  It does not perform any schema
+processing, and does not interpret DTDs or any other kind of schema.
+It adheres strictly to the XML specification, in all its awkward details,
+except for the aforementioned DTDs.
+
+The XML::Easy module supplies functions that parse and serialise XML data
+according to the XML 1.0 specification.  The functions are implemented
+in C for performance, with a pure Perl backup version (which has good
+performance compared to other pure Perl parsers) for systems that can't
+handle XS modules.
+
+The XML::Easy::Syntax module supplies Perl regular expressions
+encompassing the grammar of XML 1.0, except for document type declarations
+and DTDs.  They can be used to construct an XML parser, but it is
+generally recommended to use a pre-existing parser (as supplied in
+XML::Easy) when doing ordinary XML processing.  This module is most
+useful when doing irregular things with XML.
+
+The XML::Easy::Element class represents XML data trees in abstract form,
+without any irrelevant detail resulting from the textual syntax.  This is
+a suitable form for application code to manipulate an XML representation
+of application data.
+
+INSTALLATION
+
+	perl Build.PL
+	./Build
+	./Build test
+	./Build install
+
+AUTHOR
+
+Andrew Main (Zefram) <zefram@fysh.org>
+
+COPYRIGHT
+
+Copyright (C) 2008 PhotoBox Ltd
+
+LICENSE
+
+This module is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.

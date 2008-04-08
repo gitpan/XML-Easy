@@ -1,0 +1,1655 @@
+###e
+bless( [
+  "a",
+  {},
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a/>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo</a>
+###e
+bless( [
+  "aa",
+  {},
+  [
+    "foo"
+  ]
+], 'XML::Easy::Element' )
+#
+<aa>foo</aa>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo",
+    bless( [
+      "b",
+      {},
+      [
+        ""
+      ]
+    ], 'XML::Easy::Element' ),
+    "bar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo<b/>bar</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo",
+    bless( [
+      "b",
+      {},
+      [
+        "q"
+      ]
+    ], 'XML::Easy::Element' ),
+    "bar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo<b>q</b>bar</a>
+###e
+bless( [
+  "a",
+  {
+    "foo" => "bar"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a foo="bar"/>
+###e
+bless( [
+  "a",
+  {
+    "foo" => "ba'r"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a foo="ba'r"/>
+###e
+bless( [
+  "a",
+  {
+    "foo" => "ba\"r"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a foo="ba&#x22;r"/>
+###e
+bless( [
+  "a",
+  {
+    "baz" => "quux",
+    "foo" => "bar"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a baz="quux" foo="bar"/>
+###e
+bless( [
+  "a",
+  {
+    "alfa" => "A",
+    "bravo" => "B",
+    "charlie" => "C",
+    "delta" => "D",
+    "echo" => "E",
+    "foxtrot" => "F",
+    "golf" => "G",
+    "hotel" => "H",
+    "india" => "I",
+    "juliett" => "J",
+    "kilo" => "K",
+    "lima" => "L",
+    "mike" => "M",
+    "november" => "N",
+    "oscar" => "O",
+    "papa" => "P",
+    "quebec" => "Q",
+    "romeo" => "R",
+    "sierra" => "S",
+    "tango" => "T",
+    "uniform" => "U",
+    "victor" => "V",
+    "whiskey" => "W",
+    "x-ray" => "X",
+    "yankee" => "Y",
+    "zulu" => "Z"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a alfa="A" bravo="B" charlie="C" delta="D" echo="E" foxtrot="F" golf="G" hotel="H" india="I" juliett="J" kilo="K" lima="L" mike="M" november="N" oscar="O" papa="P" quebec="Q" romeo="R" sierra="S" tango="T" uniform="U" victor="V" whiskey="W" x-ray="X" yankee="Y" zulu="Z"/>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foobar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foobar</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "<x&y>"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>&#x3c;x&#x26;y></a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo<x&y>bar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo&#x3c;x&#x26;y>bar</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo]>bar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo]>bar</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo]]bar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo]]bar</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo>bar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo>bar</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo]bar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo]bar</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "]>bar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>]>bar</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "]]bar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>]]bar</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    ">bar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>>bar</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "]bar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>]bar</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo]>"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo]></a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo]]"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo]]</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo>"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo></a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo]"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo]</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "]>"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>]></a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "]]"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>]]</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    ">"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>></a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "]"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>]</a>
+###e
+bless( [
+  "a",
+  {
+    "x" => "foo]]>bar"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a x="foo]]>bar"/>
+###e
+bless( [
+  "a",
+  {
+    "x" => "]]>bar"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a x="]]>bar"/>
+###e
+bless( [
+  "a",
+  {
+    "x" => "foo]]>"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a x="foo]]>"/>
+###e
+bless( [
+  "a",
+  {
+    "x" => "]]>"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a x="]]>"/>
+###e
+bless( [
+  "x\x{b7}y",
+  {},
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<x·y/>
+###e
+bless( [
+  "a",
+  {
+    "x\x{b7}y" => "z"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a x·y="z"/>
+###e
+bless( [
+  "a",
+  {
+    "z" => "x\x{b7}y"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a z="x·y"/>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x\x{b7}y"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x·y</a>
+###e
+bless( [
+  "x\x{137}y",
+  {},
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<xķy/>
+###e
+bless( [
+  "a",
+  {
+    "x\x{137}y" => "z"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a xķy="z"/>
+###e
+bless( [
+  "a",
+  {
+    "z" => "x\x{137}y"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a z="xķy"/>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x\x{137}y"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>xķy</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo bar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo bar</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo\tbar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo	bar</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo\nbar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo
+bar</a>
+###e
+bless( [
+  "a",
+  {
+    "x" => "foo bar"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a x="foo bar"/>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x<y"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x&#x3c;y</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x>y"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x>y</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x&y"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x&#x26;y</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x\"y"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x"y</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x'y"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x'y</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x\ty"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x	y</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x\ny"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x
+y</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x\ry"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x&#x0d;y</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x y"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x y</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x:y"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x:y</a>
+###e
+bless( [
+  "a",
+  {
+    "z" => "x<y"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a z="x&#x3c;y"/>
+###e
+bless( [
+  "a",
+  {
+    "z" => "x>y"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a z="x>y"/>
+###e
+bless( [
+  "a",
+  {
+    "z" => "x&y"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a z="x&#x26;y"/>
+###e
+bless( [
+  "a",
+  {
+    "z" => "x\"y"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a z="x&#x22;y"/>
+###e
+bless( [
+  "a",
+  {
+    "z" => "x'y"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a z="x'y"/>
+###e
+bless( [
+  "a",
+  {
+    "z" => "x\ty"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a z="x&#x09;y"/>
+###e
+bless( [
+  "a",
+  {
+    "z" => "x\ny"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a z="x&#x0a;y"/>
+###e
+bless( [
+  "a",
+  {
+    "z" => "x\ry"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a z="x&#x0d;y"/>
+###e
+bless( [
+  "a",
+  {
+    "z" => "x y"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a z="x y"/>
+###e
+bless( [
+  "a",
+  {
+    "z" => "x:y"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<a z="x:y"/>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo'bar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo'bar</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "foo\"bar"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>foo"bar</a>
+###e
+bless( [
+  "para",
+  {},
+  [
+    "Lorem ipsum dolor sit amet, consectetur adipisicing elit,\nsed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n",
+    bless( [
+      "b",
+      {
+        "tag" => "thing"
+      },
+      [
+        "Ut enim ad minim veniam, quis nostrud exercitation\nullamco laboris nisi ut aliquip ex ea commodo consequat."
+      ]
+    ], 'XML::Easy::Element' ),
+    "  Duis aute\nirure dolor in reprehenderit in voluptate velit esse cillum dolore eu\nfugiat nulla pariatur.  ",
+    bless( [
+      "word",
+      {},
+      [
+        "Excepteur"
+      ]
+    ], 'XML::Easy::Element' ),
+    " sint occaecat cupidatat\nnon proident, sunt in culpa qui officia deserunt mollit anim id est\nlaborum."
+  ]
+], 'XML::Easy::Element' )
+#
+<para>Lorem ipsum dolor sit amet, consectetur adipisicing elit,
+sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+<b tag="thing">Ut enim ad minim veniam, quis nostrud exercitation
+ullamco laboris nisi ut aliquip ex ea commodo consequat.</b>  Duis aute
+irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+fugiat nulla pariatur.  <word>Excepteur</word> sint occaecat cupidatat
+non proident, sunt in culpa qui officia deserunt mollit anim id est
+laborum.</para>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "\x{137}"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>ķ</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "xy"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>xy</a>
+###c
+[
+  "",
+  bless( [
+    "a",
+    {},
+    [
+      ""
+    ]
+  ], 'XML::Easy::Element' ),
+  "\n"
+]
+#
+<a/>
+
+###c
+[
+  "\n",
+  bless( [
+    "a",
+    {},
+    [
+      ""
+    ]
+  ], 'XML::Easy::Element' ),
+  ""
+]
+#
+
+<a/>
+###c
+[
+  "a",
+  bless( [
+    "a",
+    {},
+    [
+      ""
+    ]
+  ], 'XML::Easy::Element' ),
+  ""
+]
+#
+a<a/>
+###c
+[
+  "",
+  bless( [
+    "a",
+    {},
+    [
+      ""
+    ]
+  ], 'XML::Easy::Element' ),
+  "a"
+]
+#
+<a/>a
+###c
+[
+  "a!"
+]
+#
+a!
+###c
+[
+  "",
+  bless( [
+    "a",
+    {},
+    [
+      ""
+    ]
+  ], 'XML::Easy::Element' ),
+  ""
+]
+#
+<a/>
+###c
+[
+  ""
+]
+#
+
+###c
+[
+  "foo",
+  bless( [
+    "a",
+    {},
+    [
+      ""
+    ]
+  ], 'XML::Easy::Element' ),
+  "bar",
+  bless( [
+    "b",
+    {},
+    [
+      ""
+    ]
+  ], 'XML::Easy::Element' ),
+  ""
+]
+#
+foo<a/>bar<b/>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "z"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>z</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "\n"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>
+</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "<"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>&#x3c;</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "yz"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>yz</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "y\n"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>y
+</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "y<"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>y&#x3c;</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "\nz"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>
+z</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "\n\n"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>
+
+</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "\n<"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>
+&#x3c;</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    ">z"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>>z</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    ">\n"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>>
+</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "><"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>>&#x3c;</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "xyz"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>xyz</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "xy\n"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>xy
+</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "xy<"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>xy&#x3c;</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x\nz"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x
+z</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x\n\n"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x
+
+</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x\n<"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x
+&#x3c;</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x>z"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x>z</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x>\n"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x>
+</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "x><"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>x>&#x3c;</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "\nyz"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>
+yz</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "\ny\n"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>
+y
+</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "\ny<"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>
+y&#x3c;</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "\n\nz"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>
+
+z</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "\n\n\n"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>
+
+
+</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "\n\n<"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>
+
+&#x3c;</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "\n>z"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>
+>z</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "\n>\n"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>
+>
+</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "\n><"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>
+>&#x3c;</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "&yz"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>&#x26;yz</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "&y\n"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>&#x26;y
+</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "&y<"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>&#x26;y&#x3c;</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "&\nz"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>&#x26;
+z</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "&\n\n"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>&#x26;
+
+</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "&\n<"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>&#x26;
+&#x3c;</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "&>z"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>&#x26;>z</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "&>\n"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>&#x26;>
+</a>
+###e
+bless( [
+  "a",
+  {},
+  [
+    "&><"
+  ]
+], 'XML::Easy::Element' )
+#
+<a>&#x26;>&#x3c;</a>
+###c
+""
+#
+invalid XML data: content array isn't an array
+###c
+{}
+#
+invalid XML data: content array isn't an array
+###c
+bless( [], 'XML::Easy::Element' )
+#
+invalid XML data: content array isn't an array
+###c
+[]
+#
+invalid XML data: content array has even length
+###c
+[
+  "xyz",
+  bless( [
+    "a",
+    {},
+    [
+      ""
+    ]
+  ], 'XML::Easy::Element' )
+]
+#
+invalid XML data: content array has even length
+###c
+[
+  {}
+]
+#
+invalid XML data: character data isn't a string
+###c
+[
+  "foo\0bar"
+]
+#
+invalid XML data: character data contains illegal character
+###c
+[
+  "foo\37bar"
+]
+#
+invalid XML data: character data contains illegal character
+###e
+bless( [
+  "a",
+  {
+    "z" => {}
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: character data isn't a string
+###e
+bless( [
+  "a",
+  {
+    "z" => "foo\0bar"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: character data contains illegal character
+###e
+bless( [
+  "a",
+  {
+    "z" => "foo\37bar"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: character data contains illegal character
+###e
+""
+#
+invalid XML data: element data isn't an element
+###e
+{}
+#
+invalid XML data: element data isn't an element
+###e
+[]
+#
+invalid XML data: element data isn't an element
+###e
+bless( [
+  "a",
+  {},
+  [
+    ""
+  ]
+], 'XML::Easy::NotElement' )
+#
+invalid XML data: element data isn't an element
+###e
+bless( [
+  [],
+  {},
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: element type name isn't a string
+###e
+bless( [
+  "foo\0bar",
+  {},
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: illegal element type name
+###e
+bless( [
+  "foo\37bar",
+  {},
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: illegal element type name
+###e
+bless( [
+  "foo+bar",
+  {},
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: illegal element type name
+###e
+bless( [
+  "0foo",
+  {},
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: illegal element type name
+###e
+bless( [
+  "a",
+  "",
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: attribute hash isn't a hash
+###e
+bless( [
+  "a",
+  bless( {}, 'XML::Easy::Element' ),
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: attribute hash isn't a hash
+###e
+bless( [
+  "a",
+  {
+    "foo\0bar" => "quux"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: illegal attribute name
+###e
+bless( [
+  "a",
+  {
+    "foo\37bar" => "quux"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: illegal attribute name
+###e
+bless( [
+  "a",
+  {
+    "foo+bar" => "quux"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: illegal attribute name
+###e
+bless( [
+  "a",
+  {
+    "0foo" => "quux"
+  },
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: illegal attribute name
+###d
+bless( [
+  "a",
+  {},
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<?xml version="1.0" standalone="yes"?>
+<a/>
+
+###d"UTF-8"
+bless( [
+  "a",
+  {},
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<a/>
+
+###d"-FOO"
+bless( [
+  "a",
+  {},
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: illegal encoding name
+###d"FOO+BAR"
+bless( [
+  "a",
+  {},
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: illegal encoding name
+###d{}
+bless( [
+  "a",
+  {},
+  [
+    ""
+  ]
+], 'XML::Easy::Element' )
+#
+invalid XML data: encoding name isn't a string
+###x
+[
+  "a!"
+]
+#
+a!
+###x"UTF-8"
+[
+  "a!"
+]
+#
+<?xml encoding="UTF-8"?>a!
+###x"-FOO"
+[
+  "a!"
+]
+#
+invalid XML data: illegal encoding name
+###x"FOO+BAR"
+[
+  "a!"
+]
+#
+invalid XML data: illegal encoding name
+###x{}
+[
+  "a!"
+]
+#
+invalid XML data: encoding name isn't a string
+###
