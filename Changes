@@ -1,3 +1,61 @@
-version 0.000; 2008-TO-DO
+version 0.001; 2009-03-03
+
+  * introduce class XML::Easy::Content to encapsulate XML content
+
+  * add friendlier node manipulation functions in XML::Easy::NodeBasics
+
+  * bugfix: work around perl bug that was causing spurious errors in
+    the pure-Perl parser and serialiser for inputs with long (>= 32 Ki)
+    sequences of characters (the XS parser and serialiser were unaffected)
+
+  * document that the long-input perl bug affects the XML::Easy::Syntax
+    regular expressions in a way that can't be effectively worked around
+
+  * bugfix: make pure Perl parser always generate its own exception,
+    not a Perl exception, when processing a character reference for
+    an illegal Unicode character such as U+d800, and not emit a Perl
+    warning when processing a character reference for a dubious Unicode
+    character such as U+1ffff (the XS parser is unaffected)
+
+  * bugfix: make element construction and pure Perl serialiser always
+    generate its own exception, not a Perl exception, when given data
+    containing an illegal Unicode character such as U+d800 (the XS
+    serialiser is unaffected)
+
+  * new module XML::Easy::Classify, with data classification functions
+
+  * move parser and serialiser into new module XML::Easy::Text, leaving
+    XML::Easy itself to be just documentation of the suite
+
+  * revise documentation and some code for consistency of terminology
+
+  * detect and complain about use of non-string input to parser functions
+
+  * detect and complain about use of invalid attribute name in
+    $element->attribute()
+
+  * bugfix: properly detect and complain about use of glob as encoding
+    name argument to XS serialiser functions (they were being treated
+    as undef on perl 5.8)
+
+  * where a content array or attribute hash has multiple errors,
+    consistently complain about the first one rather than any other
+
+  * detect and complain about globs used in place of string arguments,
+    in XS version (the pure-Perl version already detected them)
+
+  * add #line directive to XML::Easy::Text to give useful line numbers
+    in error messages regarding the code in the __DATA__ section
+
+  * more test cases
+
+  * don't use literal CR in t/read.data, because it was causing signature
+    checking problems
+
+  * avoid declaration-after-statement in C code (not valid in C90)
+
+  * use full stricture in Build.PL
+
+version 0.000; 2008-04-08
 
   * initial released version

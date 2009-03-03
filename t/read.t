@@ -1,15 +1,24 @@
-use Test::More tests => 1 + 2*274;
-
-BEGIN { use_ok "XML::Easy", qw(
-		xml10_read_content xml10_read_element
-		xml10_read_document xml10_read_extparsedent
-); }
+use warnings;
+use strict;
 
 use Encode qw(decode);
 use IO::File ();
 use Params::Classify qw(scalar_class);
 use Scalar::Util qw(blessed reftype);
+use t::ErrorCases qw(COUNT_error_text test_error_text);
+
 use utf8 ();
+
+use Test::More tests => 1 + 2*504 + 2 + COUNT_error_text*6;
+
+BEGIN { $SIG{__WARN__} = sub { die "WARNING: $_[0]" }; }
+
+BEGIN { use_ok "XML::Easy::Text", qw(
+		xml10_read_content_object xml10_read_content
+		xml10_read_element
+		xml10_read_document
+		xml10_read_extparsedent_object xml10_read_extparsedent
+); }
 
 sub deep_match($$);
 sub deep_match($$) {
@@ -63,10 +72,10 @@ sub downgraded($) {
 }
 
 my %reader = (
-	c => \&xml10_read_content,
+	c => \&xml10_read_content_object,
 	e => \&xml10_read_element,
 	d => \&xml10_read_document,
-	x => \&xml10_read_extparsedent,
+	x => \&xml10_read_extparsedent_object,
 );
 
 sub try_read($$) {
@@ -78,7 +87,7 @@ my $data_in = IO::File->new("t/read.data", "r") or die;
 my $line = $data_in->getline;
 
 while(1) {
-	$line =~ /\A###([a-z])?\n\z/ or die;
+	$line =~ /\A###([a-z])?-?\n\z/ or die;
 	last unless defined $1;
 	my $prod = $1;
 	$line = $data_in->getline;
@@ -92,6 +101,9 @@ while(1) {
 	}
 	die if $input eq "";
 	chomp($input);
+	$input =~ tr/~/\r/;
+	$input =~ s/\$\((.*?)\)/$1 x 40000/seg;
+	$input =~ s/\$\{(.*?)\}/$1 x 32764/seg;
 	$input = decode("UTF-8", $input);
 	my $correct = "";
 	while(1) {
@@ -101,10 +113,27 @@ while(1) {
 		$correct .= $line;
 	}
 	chomp $correct;
-	$correct = $correct =~ /\A[:'A-Za-z ]+\z/ ? [ "error", "$correct\n" ] :
-						    [ "ok", eval($correct) ];
+	$correct = $correct =~ /\A[:'A-Za-z ]+\z/ ?
+		[ "error", "$correct\n" ] :
+		[ "ok", do { no warnings "utf8"; eval($correct) } ];
 	ok deep_match(try_read($prod, upgraded($input)), $correct);
 	ok deep_match(try_read($prod, downgraded($input)), $correct);
+}
+
+is_deeply
+	xml10_read_content_object("foo<q>bar</q>baz")->content,
+	xml10_read_content("foo<q>bar</q>baz");
+
+is_deeply
+	xml10_read_extparsedent_object("foo<q>bar</q>baz")->content,
+	xml10_read_extparsedent("foo<q>bar</q>baz");
+
+foreach my $func (
+	(values %reader),
+	\&xml10_read_content_object,
+	\&xml10_read_extparsedent_object
+) {
+	test_error_text($func);
 }
 
 1;

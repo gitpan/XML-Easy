@@ -1,22 +1,22 @@
-###e
+###e-
 <a/>
 
 #
 XML syntax error
-###e
+###e-
 
 <a/>
 #
 XML syntax error
-###e
+###e-
 a<a/>
 #
 XML syntax error
-###e
+###e-
 <a/>a
 #
 XML syntax error
-###e
+###e-
 a
 #
 XML syntax error
@@ -26,9 +26,9 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a/>
@@ -37,9 +37,20 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a/>
+$( )
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 
@@ -48,19 +59,30 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
+$( )
+<a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d-
 a<a/>
 #
 XML syntax error
-###d
+###d-
 <a/>a
 #
 XML syntax error
-###d
+###d-
 a
 #
 XML syntax error
@@ -70,11 +92,11 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <a/ >
 #
 XML syntax error
@@ -84,19 +106,19 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 < a/>
 #
 XML syntax error
-###d
+###d-
 <a>
 #
 XML syntax error
-###d
+###d-
 </a>
 #
 XML syntax error
@@ -106,9 +128,9 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###e
 <a>foo</a>
@@ -116,9 +138,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>foo</a>
@@ -126,9 +148,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>foo</a >
@@ -136,15 +158,25 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
+<a>foo</a$( )>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "foo"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d-
 <a>foo</ a>
 #
 XML syntax error
-###d
+###d-
 <a>foo< /a>
 #
 XML syntax error
@@ -154,11 +186,11 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 < a>foo</a>
 #
 XML syntax error
@@ -180,15 +212,15 @@ XML constraint error: mismatched tags
 bless( [
   "aa",
   {},
-  [
+  bless( [ [
     "foo"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 foo
 #
 XML syntax error
-###d
+###d-
 <a/><b/>
 #
 XML syntax error
@@ -198,17 +230,17 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo",
     bless( [
       "b",
       {},
-      [
+      bless( [ [
         ""
-      ]
+      ] ], 'XML::Easy::Content' )
     ], 'XML::Easy::Element' ),
     "bar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>foo<b>q</b>bar</a>
@@ -216,31 +248,87 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo",
     bless( [
       "b",
       {},
-      [
+      bless( [ [
         "q"
-      ]
+      ] ], 'XML::Easy::Content' )
     ], 'XML::Easy::Element' ),
     "bar"
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>foo$(<b>q</b>)bar</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "foo",
+    bless( [
+      "b",
+      {},
+      bless( [ [
+        "q"
+      ] ], 'XML::Easy::Content' )
+    ], 'XML::Easy::Element' ),
+    ((
+      "",
+      bless( [
+        "b",
+        {},
+        bless( [ [
+          "q"
+        ] ], 'XML::Easy::Content' )
+      ], 'XML::Easy::Element' ),
+    ) x 39999),
+    "bar"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>foo$(x<b>q</b>)bar</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "foox",
+    bless( [
+      "b",
+      {},
+      bless( [ [
+        "q"
+      ] ], 'XML::Easy::Content' )
+    ], 'XML::Easy::Element' ),
+    ((
+      "x",
+      bless( [
+        "b",
+        {},
+        bless( [ [
+          "q"
+        ] ], 'XML::Easy::Content' )
+      ], 'XML::Easy::Element' ),
+    ) x 39999),
+    "bar"
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>foo<b>q</a>bar</b>
 #
 XML constraint error: mismatched tags
-###d
+###d-
 <a>foo<b>bar</a>
 #
 XML constraint error: mismatched tags
-###d
+###d-
 <a>foo<b>bar</b>
 #
 XML syntax error
-###d
+###d-
 <a>foo</b>bar</a>
 #
 XML constraint error: mismatched tags
@@ -252,11 +340,11 @@ bless( [
   {
     "foo" => "bar"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <a foo="bar"/ >
 #
 XML syntax error
@@ -268,9 +356,21 @@ bless( [
   {
     "foo" => "bar"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a foo="bar"$( )/>
+#
+bless( [
+  "a",
+  {
+    "foo" => "bar"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a foo= "bar"/>
@@ -280,9 +380,21 @@ bless( [
   {
     "foo" => "bar"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a foo=$( )"bar"/>
+#
+bless( [
+  "a",
+  {
+    "foo" => "bar"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a foo ="bar"/>
@@ -292,9 +404,21 @@ bless( [
   {
     "foo" => "bar"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a foo$( )="bar"/>
+#
+bless( [
+  "a",
+  {
+    "foo" => "bar"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a  foo="bar"/>
@@ -304,11 +428,23 @@ bless( [
   {
     "foo" => "bar"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
+<a$( )foo="bar"/>
+#
+bless( [
+  "a",
+  {
+    "foo" => "bar"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d-
 < a foo="bar"/>
 #
 XML syntax error
@@ -320,15 +456,15 @@ bless( [
   {
     "foo" => "bar"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <a foo="bar'/>
 #
 XML syntax error
-###d
+###d-
 <a foo='bar"/>
 #
 XML syntax error
@@ -340,15 +476,15 @@ bless( [
   {
     "foo" => "ba'r"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <a foo="ba"r"/>
 #
 XML syntax error
-###d
+###d-
 <a foo='ba'r'/>
 #
 XML syntax error
@@ -360,9 +496,9 @@ bless( [
   {
     "foo" => "ba\"r"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a foo="bar" baz="quux"/>
@@ -373,11 +509,11 @@ bless( [
     "baz" => "quux",
     "foo" => "bar"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <a foo="bar"baz="quux"/>
 #
 XML syntax error
@@ -386,18 +522,22 @@ XML syntax error
 #
 XML constraint error: duplicate attribute
 ###d
+<a$( foo="bar")/>
+#
+XML constraint error: duplicate attribute
+###d
 <a foo="bar" foo="quux"/>
 #
 XML constraint error: duplicate attribute
-###e
+###e-
 <!--foo-->
 #
 XML syntax error
-###e
+###e-
 <!--foo--><a/>
 #
 XML syntax error
-###e
+###e-
 <a/><!--foo-->
 #
 XML syntax error
@@ -407,9 +547,9 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###e
 <a>foo<!--foo-->bar</a>
@@ -417,11 +557,31 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foobar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###e
+<a>foo$(<!--foo-->)bar</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "foobar"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###e
+<a>$(foo<!--foo-->)bar</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ("foo"x40000)."bar"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d-
 <!--foo-->
 #
 XML syntax error
@@ -431,9 +591,9 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a/><!--foo-->
@@ -441,9 +601,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a><!--foo--></a>
@@ -451,9 +611,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>foo<!--foo-->bar</a>
@@ -461,19 +621,19 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foobar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###e
+###e-
 <?wibble?>
 #
 XML syntax error
-###e
+###e-
 <?wibble?><a/>
 #
 XML syntax error
-###e
+###e-
 <a/><?wibble?>
 #
 XML syntax error
@@ -483,9 +643,9 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###e
 <a>foo<?wibble?>bar</a>
@@ -493,11 +653,11 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foobar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <?wibble?>
 #
 XML syntax error
@@ -507,9 +667,9 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a/><?wibble?>
@@ -517,9 +677,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a><?wibble?></a>
@@ -527,9 +687,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>foo<?wibble?>bar</a>
@@ -537,20 +697,20 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foobar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <![CDATA[<x&y>]]>
 #
 XML syntax error
-###d
+###d-
 <![CDATA[<x&y>]]>
 <a/>
 #
 XML syntax error
-###d
+###d-
 <a/>
 <![CDATA[<x&y>]]>
 #
@@ -561,9 +721,9 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "<x&y>"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>foo<![CDATA[<x&y>]]>bar</a>
@@ -571,11 +731,11 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo<x&y>bar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <a>foo]]>bar</a>
 #
 XML syntax error
@@ -585,9 +745,9 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo]>bar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>foo]]bar</a>
@@ -595,9 +755,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo]]bar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>foo>bar</a>
@@ -605,9 +765,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo>bar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>foo]bar</a>
@@ -615,11 +775,11 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo]bar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <a>]]>bar</a>
 #
 XML syntax error
@@ -629,9 +789,9 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "]>bar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>]]bar</a>
@@ -639,9 +799,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "]]bar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>>bar</a>
@@ -649,9 +809,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ">bar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>]bar</a>
@@ -659,11 +819,11 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "]bar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <a>foo]]></a>
 #
 XML syntax error
@@ -673,9 +833,9 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo]>"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>foo]]</a>
@@ -683,9 +843,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo]]"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>foo></a>
@@ -693,9 +853,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo>"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>foo]</a>
@@ -703,11 +863,11 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo]"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <a>]]></a>
 #
 XML syntax error
@@ -717,9 +877,9 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "]>"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>]]</a>
@@ -727,9 +887,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "]]"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>></a>
@@ -737,9 +897,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ">"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>]</a>
@@ -747,9 +907,185 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "]"
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d-
+<a>${ }]]></a>
+#
+XML syntax error
+###d
+<a>${ }]></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    (" "x32764)."]>"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>${ }]]</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    (" "x32764)."]]"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>${ }></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    (" "x32764).">"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>${ }]</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    (" "x32764)."]"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d-
+<a>${ } ]]></a>
+#
+XML syntax error
+###d
+<a>${ } ]></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    (" "x32765)."]>"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>${ } ]]</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    (" "x32765)."]]"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>${ } ></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    (" "x32765).">"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>${ } ]</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    (" "x32765)."]"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d-
+<a>${ }  ]]></a>
+#
+XML syntax error
+###d
+<a>${ }  ]></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    (" "x32766)."]>"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>${ }  ]]</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    (" "x32766)."]]"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>${ }  ></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    (" "x32766).">"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>${ }  ]</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    (" "x32766)."]"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d-
+<a>${ }   ]]></a>
+#
+XML syntax error
+###d
+<a>${ }   ]></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    (" "x32767)."]>"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>${ }   ]]</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    (" "x32767)."]]"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>${ }   ></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    (" "x32767).">"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>${ }   ]</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    (" "x32767)."]"
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a x="foo]]>bar"/>
@@ -759,9 +1095,9 @@ bless( [
   {
     "x" => "foo]]>bar"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a x="]]>bar"/>
@@ -771,9 +1107,9 @@ bless( [
   {
     "x" => "]]>bar"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a x="foo]]>"/>
@@ -783,9 +1119,9 @@ bless( [
   {
     "x" => "foo]]>"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a x="]]>"/>
@@ -795,23 +1131,71 @@ bless( [
   {
     "x" => "]]>"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
+<a x="${ }]]>"/>
+#
+bless( [
+  "a",
+  {
+    "x" => (" "x32764)."]]>"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a x="${ } ]]>"/>
+#
+bless( [
+  "a",
+  {
+    "x" => (" "x32765)."]]>"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a x="${ }  ]]>"/>
+#
+bless( [
+  "a",
+  {
+    "x" => (" "x32766)."]]>"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a x="${ }   ]]>"/>
+#
+bless( [
+  "a",
+  {
+    "x" => (" "x32767)."]]>"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d-
 <a x="foo<b/>bar"/>
 #
 XML syntax error
-###d
+###d-
 <a x="foo<!--wibble-->bar"/>
 #
 XML syntax error
-###d
+###d-
 <a x="foo<?wibble?>bar"/>
 #
 XML syntax error
-###d
+###d-
 <a x="foo<![CDATA[wibble]]>bar"/>
 #
 XML syntax error
@@ -821,9 +1205,9 @@ XML syntax error
 bless( [
   "x\x{b7}y",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a x·y="z"/>
@@ -833,9 +1217,9 @@ bless( [
   {
     "x\x{b7}y" => "z"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a z="x·y"/>
@@ -845,9 +1229,9 @@ bless( [
   {
     "z" => "x\x{b7}y"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>x·y</a>
@@ -855,9 +1239,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x\x{b7}y"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a><![CDATA[x·y]]></a>
@@ -865,9 +1249,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x\x{b7}y"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a><?x·y?></a>
@@ -875,19 +1259,19 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a><?x ·y?></a>
+<a><?x x·y?></a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a><!--x·y--></a>
@@ -895,9 +1279,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <xķy/>
@@ -905,9 +1289,9 @@ bless( [
 bless( [
   "x\x{137}y",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a xķy="z"/>
@@ -917,9 +1301,9 @@ bless( [
   {
     "x\x{137}y" => "z"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a z="xķy"/>
@@ -929,9 +1313,9 @@ bless( [
   {
     "z" => "x\x{137}y"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>xķy</a>
@@ -939,9 +1323,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x\x{137}y"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a><![CDATA[xķy]]></a>
@@ -949,9 +1333,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x\x{137}y"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a><?xķy?></a>
@@ -959,19 +1343,19 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a><?x ķy?></a>
+<a><?x xķy?></a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a><!--xķy--></a>
@@ -979,43 +1363,431 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
+<x$(a)y/>
+#
+bless( [
+  "x".("a"x40000)."y",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a x$(a)y="z"/>
+#
+bless( [
+  "a",
+  {
+    "x".("a"x40000)."y" => "z"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x$(a)y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x".("a"x40000)."y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x$(a)y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x".("a"x40000)."y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><![CDATA[x$(a)y]]></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x".("a"x40000)."y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><?x$(a)y?></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><?x x$(a)y?></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><!--x$(a)y--></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<x$(·)y/>
+#
+bless( [
+  "x".("\x{b7}"x40000)."y",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a x$(·)y="z"/>
+#
+bless( [
+  "a",
+  {
+    "x".("\x{b7}"x40000)."y" => "z"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x$(·)y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x".("\x{b7}"x40000)."y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x$(·)y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x".("\x{b7}"x40000)."y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><![CDATA[x$(·)y]]></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x".("\x{b7}"x40000)."y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><?x$(·)y?></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><?x x$(·)y?></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><!--x$(·)y--></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<x$(ķ)y/>
+#
+bless( [
+  "x".("\x{137}"x40000)."y",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a x$(ķ)y="z"/>
+#
+bless( [
+  "a",
+  {
+    "x".("\x{137}"x40000)."y" => "z"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x$(ķ)y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x".("\x{137}"x40000)."y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x$(ķ)y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x".("\x{137}"x40000)."y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><![CDATA[x$(ķ)y]]></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x".("\x{137}"x40000)."y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><?x$(ķ)y?></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><?x x$(ķ)y?></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><!--x$(ķ)y--></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x$(~
+)y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x".(" "x40000)."y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x$(~
+)y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x".("\n"x40000)."y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><![CDATA[x$(~
+)y]]></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x".("\n"x40000)."y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><?x$(~
+)y?></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><?x x$(~
+)y?></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><!--x$(~
+)y--></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="xX$(~
+)y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "xX".(" "x40000)."y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>xX$(~
+)y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "xX".("\n"x40000)."y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><![CDATA[xX$(~
+)y]]></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "xX".("\n"x40000)."y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><?xX$(~
+)y?></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><?x xX$(~
+)y?></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><!--xX$(~
+)y--></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d-
 <xy/>
 #
 XML syntax error
-###d
+###d-
 <a xy="z"/>
 #
 XML syntax error
-###d
+###d-
 <a z="xy"/>
 #
 XML syntax error
-###d
+###d-
 <a>xy</a>
 #
 XML syntax error
-###d
+###d-
 <a><![CDATA[xy]]></a>
 #
 XML syntax error
-###d
+###d-
 <a><?xy?></a>
 #
 XML syntax error
-###d
+###d-
 <a><?x y?></a>
 #
 XML syntax error
-###d
+###d-
 <a><!--xy--></a>
 #
 XML syntax error
-###d
+###d-
 <a/
 >
 #
@@ -1027,16 +1799,16 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <
 a/>
 #
 XML syntax error
-###d
+###d-
 <a/	>
 #
 XML syntax error
@@ -1046,50 +1818,50 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <	a/>
 #
 XML syntax error
-###d
-<a/>
+###d-
+<a/~>
 #
 XML syntax error
 ###d
-<a/>
+<a~/>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
-<a/>
+###d-
+<~a/>
 #
 XML syntax error
-###d
-<a/
+###d-
+<a/~
 >
 #
 XML syntax error
 ###d
-<a
+<a~
 />
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
-<
+###d-
+<~
 a/>
 #
 XML syntax error
@@ -1099,9 +1871,9 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo bar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>foo	bar</a>
@@ -1109,9 +1881,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo\tbar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>foo
@@ -1120,30 +1892,82 @@ bar</a>
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo\nbar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>foobar</a>
+<a>foo~bar</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo\nbar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>foo
+<a>foo~
 bar</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo\nbar"
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a> </a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    " "
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>	</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "\t"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>
+</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "\n"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>~</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "\n"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>~
+</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "\n"
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a><![CDATA[foo bar]]></a>
@@ -1151,9 +1975,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo bar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a><![CDATA[foo	bar]]></a>
@@ -1161,9 +1985,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo\tbar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a><![CDATA[foo
@@ -1172,30 +1996,82 @@ bar]]></a>
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo\nbar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a><![CDATA[foobar]]></a>
+<a><![CDATA[foo~bar]]></a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo\nbar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a><![CDATA[foo
+<a><![CDATA[foo~
 bar]]></a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo\nbar"
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><![CDATA[ ]]></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    " "
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><![CDATA[	]]></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "\t"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><![CDATA[
+]]></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "\n"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><![CDATA[~]]></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "\n"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a><![CDATA[~
+]]></a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "\n"
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a x="foo bar"/>
@@ -1205,9 +2081,9 @@ bless( [
   {
     "x" => "foo bar"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a x="foo	bar"/>
@@ -1217,9 +2093,9 @@ bless( [
   {
     "x" => "foo bar"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a x="foo
@@ -1230,24 +2106,24 @@ bless( [
   {
     "x" => "foo bar"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a x="foobar"/>
+<a x="foo~bar"/>
 #
 bless( [
   "a",
   {
     "x" => "foo bar"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a x="foo
+<a x="foo~
 bar"/>
 #
 bless( [
@@ -1255,11 +2131,73 @@ bless( [
   {
     "x" => "foo bar"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
+<a x=" "/>
+#
+bless( [
+  "a",
+  {
+    "x" => " "
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a x="	"/>
+#
+bless( [
+  "a",
+  {
+    "x" => " "
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a x="
+"/>
+#
+bless( [
+  "a",
+  {
+    "x" => " "
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a x="~"/>
+#
+bless( [
+  "a",
+  {
+    "x" => " "
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a x="~
+"/>
+#
+bless( [
+  "a",
+  {
+    "x" => " "
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d-
 <a>x&y</a>
 #
 XML syntax error
@@ -1269,9 +2207,9 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x<y"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>x&gt;y</a>
@@ -1279,9 +2217,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x>y"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>x&amp;y</a>
@@ -1289,9 +2227,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x&y"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>x&quot;y</a>
@@ -1299,9 +2237,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x\"y"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>x&apos;y</a>
@@ -1309,27 +2247,89 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x'y"
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x$(&apos;)y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x".("'"x40000)."y"
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>x&foo;y</a>
 #
 XML constraint error: reference to undeclared entity
 ###d
+<a>x&x$(a)y;y</a>
+#
+XML constraint error: reference to undeclared entity
+###d
+<a>x&x$(·)y;y</a>
+#
+XML constraint error: reference to undeclared entity
+###d
+<a>x&x$(ķ)y;y</a>
+#
+XML constraint error: reference to undeclared entity
+###d
+<a>x&#x0;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#0;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#x1;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
 <a>x&#1;y</a>
 #
 XML constraint error: invalid character in character reference
+###d
+<a>x&#x8;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#8;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#x9;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\ty"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
 ###d
 <a>x&#9;y</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x\ty"
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#xa;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\ny"
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>x&#10;y</a>
@@ -1337,9 +2337,35 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x\ny"
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#xb;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#11;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#xc;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#12;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#xd;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\ry"
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>x&#13;y</a>
@@ -1347,9 +2373,35 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x\ry"
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#xe;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#14;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#x1f;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#31;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#x20;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x y"
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>x&#32;y</a>
@@ -1357,9 +2409,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x y"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>x&#x3a;y</a>
@@ -1367,11 +2419,309 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x:y"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
+<a>x&#58;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x:y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#xd7ff;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{d7ff}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#55295;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{d7ff}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#xd800;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#55296;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#xdfff;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#57343;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#xe000;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{e000}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#57344;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{e000}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#xfdd0;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{fdd0}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#64976;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{fdd0}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#xfffd;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{fffd}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#65533;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{fffd}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#xfffe;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#65534;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#xffff;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#65535;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#x10000;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{10000}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#65536;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{10000}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#x1fffd;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{1fffd}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#131069;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{1fffd}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#x1fffe;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{1fffe}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#131070;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{1fffe}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#x1ffff;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{1ffff}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#131071;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{1ffff}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#x20000;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{20000}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#131072;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{20000}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#x10fffd;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{10fffd}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#1114109;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{10fffd}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#x10fffe;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{10fffe}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#1114110;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{10fffe}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#x10ffff;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{10ffff}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#1114111;y</a>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    "x\x{10ffff}y"
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a>x&#x110000;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#1114112;y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#x$(a);y</a>
+#
+XML constraint error: invalid character in character reference
+###d
+<a>x&#$(1);y</a>
+#
+XML constraint error: invalid character in character reference
+###d-
 <a z="x&y"/>
 #
 XML syntax error
@@ -1383,9 +2733,9 @@ bless( [
   {
     "z" => "x<y"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a z="x&gt;y"/>
@@ -1395,9 +2745,9 @@ bless( [
   {
     "z" => "x>y"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a z="x&amp;y"/>
@@ -1407,9 +2757,9 @@ bless( [
   {
     "z" => "x&y"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a z="x&quot;y"/>
@@ -1419,9 +2769,9 @@ bless( [
   {
     "z" => "x\"y"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a z="x&apos;y"/>
@@ -1431,12 +2781,36 @@ bless( [
   {
     "z" => "x'y"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x$(&apos;)y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x".("'"x40000)."y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a z="x&foo;y"/>
+#
+XML constraint error: reference to undeclared entity
+###d
+<a z="x&x$(a)y;y"/>
+#
+XML constraint error: reference to undeclared entity
+###d
+<a z="x&x$(·)y;y"/>
+#
+XML constraint error: reference to undeclared entity
+###d
+<a z="x&x$(ķ)y;y"/>
 #
 XML constraint error: reference to undeclared entity
 ###d
@@ -1451,9 +2825,9 @@ bless( [
   {
     "z" => "x\ty"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a z="x&#10;y"/>
@@ -1463,9 +2837,9 @@ bless( [
   {
     "z" => "x\ny"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a z="x&#13;y"/>
@@ -1475,9 +2849,9 @@ bless( [
   {
     "z" => "x\ry"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a z="x&#32;y"/>
@@ -1487,9 +2861,161 @@ bless( [
   {
     "z" => "x y"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#x0;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#0;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#x1;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#1;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#x8;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#8;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#x9;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\ty"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#9;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\ty"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#xa;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\ny"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#10;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\ny"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#xb;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#11;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#xc;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#12;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#xd;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\ry"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#13;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\ry"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#xe;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#14;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#x1f;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#31;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#x20;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#32;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a z="x&#x3a;y"/>
@@ -1499,19 +3025,367 @@ bless( [
   {
     "z" => "x:y"
   },
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
+###d
+<a z="x&#58;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x:y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#xd7ff;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{d7ff}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#55295;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{d7ff}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#xd800;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#55296;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#xdfff;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#57343;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#xe000;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{e000}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#57344;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{e000}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#xfdd0;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{fdd0}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#64976;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{fdd0}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#xfffd;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{fffd}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#65533;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{fffd}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#xfffe;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#65534;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#xffff;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#65535;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#x10000;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{10000}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#65536;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{10000}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#x1fffd;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{1fffd}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#131069;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{1fffd}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#x1fffe;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{1fffe}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#131070;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{1fffe}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#x1ffff;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{1ffff}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#131071;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{1ffff}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#x20000;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{20000}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#131072;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{20000}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#x10fffd;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{10fffd}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#1114109;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{10fffd}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#x10fffe;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{10fffe}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#1114110;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{10fffe}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#x10ffff;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{10ffff}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#1114111;y"/>
+#
+bless( [
+  "a",
+  {
+    "z" => "x\x{10ffff}y"
+  },
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<a z="x&#x110000;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#1114112;y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#x$(a);y"/>
+#
+XML constraint error: invalid character in character reference
+###d
+<a z="x&#x$(1);y"/>
+#
+XML constraint error: invalid character in character reference
 ###d
 <a>foo'bar</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo'bar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>foo"bar</a>
@@ -1519,25 +3393,25 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "foo\"bar"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <?xml?>
 <a/>
 #
 XML syntax error
-###d
+###d-
 <?xml ?>
 <a/>
 #
 XML syntax error
-###e
+###e-
 <?xml version="1.0"?><a/>
 #
 XML syntax error
-###e
+###e-
 <?xml version="1.0" encoding="UTF-8"?><a/>
 #
 XML syntax error
@@ -1547,9 +3421,89 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml$( )version="1.0"?><a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version="1.0" ?><a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version="1.0"$( )?><a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version ="1.0"?><a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version$( )="1.0"?><a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version= "1.0"?><a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version=$( )"1.0"?><a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version='1.0'?><a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <?xml version="1.0"?>
@@ -1558,16 +3512,16 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <?xml version="1.1"?>
 <a/>
 #
 XML syntax error
-###d
+###d-
 <?xml encoding="UTF-8"?>
 <a/>
 #
@@ -1579,9 +3533,86 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version="1.0" encoding="UTF-8" ?>
+<a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version="1.0" encoding="UTF-8"$( )?>
+<a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version="1.0" encoding= "UTF-8"?>
+<a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version="1.0" encoding=$( )"UTF-8"?>
+<a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version="1.0" encoding ="UTF-8"?>
+<a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version="1.0" encoding$( )="UTF-8"?>
+<a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version="1.0" encoding='UTF-8'?>
+<a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <?xml version="1.0" encoding="wibble"?>
@@ -1590,11 +3621,11 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <?xml version="1.0" foo="bar"?>
 <a/>
 #
@@ -1606,9 +3637,86 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version="1.0" standalone="yes" ?>
+<a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version="1.0" standalone="yes"$( )?>
+<a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version="1.0" standalone= "yes"?>
+<a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version="1.0" standalone=$( )"yes"?>
+<a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version="1.0" standalone ="yes"?>
+<a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version="1.0" standalone$( )="yes"?>
+<a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
+], 'XML::Easy::Element' )
+###d
+<?xml version="1.0" standalone='yes'?>
+<a/>
+#
+bless( [
+  "a",
+  {},
+  bless( [ [
+    ""
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <?xml version="1.0" standalone="no"?>
@@ -1617,11 +3725,11 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ""
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <?xml version="1.0" standalone="wibble"?>
 <a/>
 #
@@ -1639,27 +3747,27 @@ laborum.</para>
 bless( [
   "para",
   {},
-  [
+  bless( [ [
     "Lorem ipsum dolor sit amet, consectetur adipisicing elit,\nsed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n",
     bless( [
       "b",
       {
         "tag" => "thing"
       },
-      [
+      bless( [ [
         "Ut enim ad minim veniam, quis nostrud exercitation\nullamco laboris nisi ut aliquip ex ea commodo consequat."
-      ]
+      ] ], 'XML::Easy::Content' )
     ], 'XML::Easy::Element' ),
     "  Duis aute\nirure dolor in reprehenderit in voluptate velit esse cillum dolore eu\nfugiat nulla pariatur.  ",
     bless( [
       "word",
       {},
-      [
+      bless( [ [
         "Excepteur"
-      ]
+      ] ], 'XML::Easy::Content' )
     ], 'XML::Easy::Element' ),
     " sint occaecat cupidatat\nnon proident, sunt in culpa qui officia deserunt mollit anim id est\nlaborum."
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <?xml version="1.0" encoding="ISO-8859-1"?>
@@ -1668,15 +3776,15 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "\x{137}"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <a>x<!--foobar--->y</a>
 #
 XML syntax error
-###d
+###d-
 <a>x<!--foobar---->y</a>
 #
 XML syntax error
@@ -1686,11 +3794,11 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "xy"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <a>x<!--foo--bar-->y</a>
 #
 XML syntax error
@@ -1700,11 +3808,11 @@ XML syntax error
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "xy"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
-###d
+###d-
 <a>x<!----foobar-->y</a>
 #
 XML syntax error
@@ -1712,307 +3820,307 @@ XML syntax error
 <a/>
 
 #
-[
+bless( [ [
   "",
   bless( [
     "a",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   "\n"
-]
+] ], 'XML::Easy::Content' )
 ###c
 
 <a/>
 #
-[
+bless( [ [
   "\n",
   bless( [
     "a",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   ""
-]
+] ], 'XML::Easy::Content' )
 ###c
 a<a/>
 #
-[
+bless( [ [
   "a",
   bless( [
     "a",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   ""
-]
+] ], 'XML::Easy::Content' )
 ###c
 <a/>a
 #
-[
+bless( [ [
   "",
   bless( [
     "a",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   "a"
-]
+] ], 'XML::Easy::Content' )
 ###c
 a
 #
-[
+bless( [ [
   "a"
-]
+] ], 'XML::Easy::Content' )
 ###c
 <a/>
 #
-[
+bless( [ [
   "",
   bless( [
     "a",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   ""
-]
-###c
+] ], 'XML::Easy::Content' )
+###c-
 <?xml version="1.0"?><a/>
 #
 XML syntax error
-###c
+###c-
 <?xml version="1.0" encoding="UTF-8"?><a/>
 #
 XML syntax error
 ###c
 <?wibble?>
 #
-[
+bless( [ [
   ""
-]
+] ], 'XML::Easy::Content' )
 ###c
 <?wibble?><a/>
 #
-[
+bless( [ [
   "",
   bless( [
     "a",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   ""
-]
+] ], 'XML::Easy::Content' )
 ###c
 foo<a/>bar<b/>
 #
-[
+bless( [ [
   "foo",
   bless( [
     "a",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   "bar",
   bless( [
     "b",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   ""
-]
+] ], 'XML::Easy::Content' )
 ###x
 <a/>
 
 #
-[
+bless( [ [
   "",
   bless( [
     "a",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   "\n"
-]
+] ], 'XML::Easy::Content' )
 ###x
 
 <a/>
 #
-[
+bless( [ [
   "\n",
   bless( [
     "a",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   ""
-]
+] ], 'XML::Easy::Content' )
 ###x
 a<a/>
 #
-[
+bless( [ [
   "a",
   bless( [
     "a",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   ""
-]
+] ], 'XML::Easy::Content' )
 ###x
 <a/>a
 #
-[
+bless( [ [
   "",
   bless( [
     "a",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   "a"
-]
+] ], 'XML::Easy::Content' )
 ###x
 a
 #
-[
+bless( [ [
   "a"
-]
+] ], 'XML::Easy::Content' )
 ###x
 <a/>
 #
-[
+bless( [ [
   "",
   bless( [
     "a",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   ""
-]
-###x
+] ], 'XML::Easy::Content' )
+###x-
 <?xml version="1.0"?><a/>
 #
 XML syntax error
 ###x
 <?xml version="1.0" encoding="UTF-8"?><a/>
 #
-[
+bless( [ [
   "",
   bless( [
     "a",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   ""
-]
+] ], 'XML::Easy::Content' )
 ###x
 <?wibble?>
 #
-[
+bless( [ [
   ""
-]
+] ], 'XML::Easy::Content' )
 ###x
 <?wibble?><a/>
 #
-[
+bless( [ [
   "",
   bless( [
     "a",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   ""
-]
+] ], 'XML::Easy::Content' )
 ###x
 foo<a/>bar<b/>
 #
-[
+bless( [ [
   "foo",
   bless( [
     "a",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   "bar",
   bless( [
     "b",
     {},
-    [
+    bless( [ [
       ""
-    ]
+    ] ], 'XML::Easy::Content' )
   ], 'XML::Easy::Element' ),
   ""
-]
-###d
+] ], 'XML::Easy::Content' )
+###d-
 
 #
 XML syntax error
-###e
+###e-
 
 #
 XML syntax error
 ###c
 
 #
-[
+bless( [ [
   ""
-]
+] ], 'XML::Easy::Content' )
 ###x
 
 #
-[
+bless( [ [
   ""
-]
+] ], 'XML::Easy::Content' )
 ###d
 <a>z</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "z"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a></a>
+<a>~</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "\n"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>&lt;</a>
@@ -2020,9 +4128,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "<"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>yz</a>
@@ -2030,19 +4138,19 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "yz"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>y</a>
+<a>y~</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "y\n"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>y&lt;</a>
@@ -2050,39 +4158,39 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "y<"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>z</a>
+<a>~z</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "\nz"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a></a>
+<a>~~</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "\n\n"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>&lt;</a>
+<a>~&lt;</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "\n<"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>&gt;z</a>
@@ -2090,19 +4198,19 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ">z"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>&gt;</a>
+<a>&gt;~</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     ">\n"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>&gt;&lt;</a>
@@ -2110,9 +4218,9 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "><"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>xyz</a>
@@ -2120,19 +4228,19 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "xyz"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>xy</a>
+<a>xy~</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "xy\n"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>xy&lt;</a>
@@ -2140,39 +4248,39 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "xy<"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>xz</a>
+<a>x~z</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x\nz"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>x</a>
+<a>x~~</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x\n\n"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>x&lt;</a>
+<a>x~&lt;</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x\n<"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>x&gt;z</a>
@@ -2180,19 +4288,19 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x>z"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>x&gt;</a>
+<a>x&gt;~</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x>\n"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>x&gt;&lt;</a>
@@ -2200,99 +4308,99 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "x><"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>yz</a>
+<a>~yz</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "\nyz"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>y</a>
+<a>~y~</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "\ny\n"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>y&lt;</a>
+<a>~y&lt;</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "\ny<"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>z</a>
+<a>~~z</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "\n\nz"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a></a>
+<a>~~~</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "\n\n\n"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>&lt;</a>
+<a>~~&lt;</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "\n\n<"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>&gt;z</a>
+<a>~&gt;z</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "\n>z"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>&gt;</a>
+<a>~&gt;~</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "\n>\n"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>&gt;&lt;</a>
+<a>~&gt;&lt;</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "\n><"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>&amp;yz</a>
@@ -2300,19 +4408,19 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "&yz"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>&amp;y</a>
+<a>&amp;y~</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "&y\n"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>&amp;y&lt;</a>
@@ -2320,39 +4428,39 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "&y<"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>&amp;z</a>
+<a>&amp;~z</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "&\nz"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>&amp;</a>
+<a>&amp;~~</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "&\n\n"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>&amp;&lt;</a>
+<a>&amp;~&lt;</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "&\n<"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>&amp;&gt;z</a>
@@ -2360,19 +4468,19 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "&>z"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
-<a>&amp;&gt;</a>
+<a>&amp;&gt;~</a>
 #
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "&>\n"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###d
 <a>&amp;&gt;&lt;</a>
@@ -2380,8 +4488,8 @@ bless( [
 bless( [
   "a",
   {},
-  [
+  bless( [ [
     "&><"
-  ]
+  ] ], 'XML::Easy::Content' )
 ], 'XML::Easy::Element' )
 ###

@@ -1,6 +1,5 @@
 use warnings;
 use strict;
-no strict "subs";
 
 use Module::Build;
 
@@ -16,34 +15,33 @@ Module::Build->subclass(code => q{
 	}
 })->new(
 	module_name => "XML::Easy",
-	dist_version => "0.000",
 	license => "perl",
 	build_requires => {
-		Encode => 0,
-		IO::File => 0,
-		Module::Build => 0,
-		Params::Classify => 0,
-		Scalar::Util => 0,
-		Test::More => 0,
-		perl => "5.008",
-		strict => 0,
-		utf8 => 0,
-		warnings => 0,
+		"Encode" => 0,
+		"IO::File" => 0,
+		"Module::Build" => 0,
+		"Params::Classify" => 0,
+		"Scalar::Util" => 0,
+		"Test::More" => 0,
+		"perl" => "5.008",
+		"strict" => 0,
+		"utf8" => 0,
+		"warnings" => 0,
 	},
 	build_recommends => {
-		ExtUtils::CBuilder => "0.15",
+		"ExtUtils::CBuilder" => "0.15",
 	},
 	requires => {
-		Exporter => 0,
-		Params::Classify => 0,
-		base => 0,
-		perl => "5.008",
-		strict => 0,
-		warnings => 0,
+		"Exporter" => 0,
+		"Params::Classify" => 0,
+		"base" => 0,
+		"perl" => "5.008",
+		"strict" => 0,
+		"warnings" => 0,
 	},
 	recommends => {
-		Internals => 0,
-		XSLoader => 0,
+		"Internals" => 0,
+		"XSLoader" => 0,
 	},
 	dynamic_config => 1,
 	meta_add => { distribution_type => "module" },

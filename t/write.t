@@ -1,15 +1,30 @@
-use Test::More tests => 1 + 2*153;
-
-BEGIN { use_ok "XML::Easy", qw(
-		xml10_write_content xml10_write_element
-		xml10_write_document xml10_write_extparsedent
-); }
+use warnings;
+use strict;
 
 use Encode qw(decode);
 use IO::File ();
 use Params::Classify qw(scalar_class);
 use Scalar::Util qw(blessed reftype);
+use XML::Easy::Content ();
+use XML::Easy::Element ();
+use t::ErrorCases qw(
+	COUNT_error_encname test_error_encname
+	COUNT_error_content_recurse test_error_content_recurse
+	COUNT_error_element_recurse test_error_element_recurse
+);
 use utf8 ();
+
+use Test::More tests => 1 + 2*171 + 2 +
+	COUNT_error_content_recurse*3 +
+	COUNT_error_element_recurse*3 +
+	COUNT_error_encname*4;
+
+BEGIN { $SIG{__WARN__} = sub { die "WARNING: $_[0]" }; }
+
+BEGIN { use_ok "XML::Easy::Text", qw(
+		xml10_write_content xml10_write_element
+		xml10_write_document xml10_write_extparsedent
+); }
 
 sub regraded($$);
 sub regraded($$) {
@@ -80,6 +95,9 @@ while(1) {
 		$correct .= $line;
 	}
 	chomp $correct;
+	$correct =~ tr/~/\r/;
+	$correct =~ s/\$\((.*?)\)/$1 x 40000/seg;
+	$correct =~ s/\$\{(.*?)\}/$1 x 32764/seg;
 	$correct = decode("UTF-8", $correct);
 	$correct = $correct =~ /\A[:'A-Za-z ]+\z/ ? [ "error", "$correct\n" ] :
 						    [ "ok", $correct ];
@@ -89,5 +107,39 @@ while(1) {
 	is_deeply try_write($prod, downgraded($input), downgraded($encname)),
 		$correct;
 }
+
+my $c0a = ["bop"];
+my $c0o = XML::Easy::Content->new($c0a);
+is xml10_write_content($c0a), xml10_write_content($c0o);
+is xml10_write_extparsedent($c0a), xml10_write_extparsedent($c0o);
+
+test_error_content_recurse \&xml10_write_content;
+test_error_element_recurse \&xml10_write_element;
+test_error_element_recurse \&xml10_write_document;
+test_error_element_recurse sub { xml10_write_document($_[0], "UTF-8") };
+test_error_content_recurse \&xml10_write_extparsedent;
+test_error_content_recurse sub { xml10_write_extparsedent($_[0], "UTF-8") };
+
+test_error_encname sub {
+	die "invalid XML data: encoding name isn't a string\n"
+		unless defined $_[0];
+	xml10_write_document(XML::Easy::Element->new("foo", {}, [""]), $_[0]);
+};
+test_error_encname sub {
+	die "invalid XML data: encoding name isn't a string\n"
+		unless defined $_[0];
+	xml10_write_extparsedent([""], $_[0]);
+};
+
+test_error_encname sub {
+	die "invalid XML data: encoding name isn't a string\n"
+		unless defined $_[0];
+	xml10_write_document(undef, $_[0]);
+};
+test_error_encname sub {
+	die "invalid XML data: encoding name isn't a string\n"
+		unless defined $_[0];
+	xml10_write_extparsedent(undef, $_[0]);
+};
 
 1;

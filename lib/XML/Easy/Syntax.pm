@@ -11,10 +11,11 @@ XML::Easy::Syntax - excruciatingly correct XML syntax
 =head1 DESCRIPTION
 
 This module supplies Perl regular expressions encompassing the grammar
-of XML 1.0, except for document type declarations and DTDs.  They can be
-used to construct an XML parser, but it is generally recommended to use
-a pre-existing parser when doing ordinary XML processing.  This module
-is most useful when doing irregular things with XML.
+of XML 1.0, except for document type declarations and DTDs.  They can
+be used to construct an XML parser, but it is generally recommended
+to use a pre-existing parser (such as the one in L<XML::Easy::Text>)
+when doing ordinary XML processing.  This module is most useful when
+doing irregular things with XML.
 
 This document assumes general familiarity with XML.
 
@@ -44,7 +45,7 @@ our @EXPORT_OK = qw(
 	$xml10_prolog_xdtd_rx $xml10_document_xdtd_rx $xml10_extparsedent_rx
 );
 
-our $VERSION = "0.000";
+our $VERSION = "0.001";
 
 sub _charclass_regexp($) {
 	my($class) = @_;
@@ -783,6 +784,10 @@ data with metacharacters disabled, and "B<< ]]> >>".
 
 =cut
 
+# Note: using the $xml10_cdata_rx regexp (from above) here would be much
+# less efficient than this use of (?>...).  It would also run into the
+# perl bug described in L</BUGS>.
+
 our $xml10_cdsect_rx = qr/(?><!\[CDATA\[$xml10_char_rx*?\]\]>)/o;
 
 =back
@@ -869,7 +874,16 @@ include "B<-->" as a subsequence, nor for it to end with "B<->".
 
 =cut
 
-our $xml10_comment_rx = qr/<!--(?:-?(?!-)$xml10_char_rx)*-->/o;
+# Note perl bug: the theoretically-cleaner way of expressing this syntax,
+# /<!--(?:-?(?!-)$xml10_char_rx)*-->/, runs into a problem where the
+# "*" acts as "{0,32767}", discussed in L</BUGS>, and so fails to match
+# longer comments.  The way that is used here, with a sufficiently simple
+# expression inside the "*", doesn't run into that problem, but instead
+# relies on the (?>...) together with the non-greedy quantifier for
+# proper parsing.  It is important for this regexp to not suffer from
+# this bug, because it is used in the pure-Perl parser.
+
+our $xml10_comment_rx = qr/<!--(?>$xml10_char_rx*?--)>/o;
 
 =item $xml10_pitarget_rx
 
@@ -1111,18 +1125,43 @@ our $xml10_extparsedent_rx = qr/$xml10_textdecl_rx?$xml10_content_rx/o;
 
 =back
 
+=head1 BUGS
+
+Many of these regular expressions are liable to tickle a serious bug in
+perl's regexp engine.  The bug is that the C<*> and C<+> repeat operators
+don't always match an unlimited number of repeats: in some cases they are
+limited to 32767 iterations.  Whether this bogus limit applies depends
+on the complexity of the expression being repeated, whether the string
+being examined is internally encoded in UTF-8, and the version of perl.
+In some cases, but not all, a false match failure is preceded by a warning
+"Complex regular subexpression recursion limit (32766) exceeded".
+
+This bug is present, in various forms, in all perl versions up to at
+least 5.8.9 and 5.10.0.
+
+There is no known feasible workaround for this perl bug.  The regular
+expressions supplied by this module will therefore, unavoidably, fail
+to accept some lengthy valid inputs.  Where this occurs, though, it is
+likely that other regular expressions being applied to the same or related
+input will also suffer the same problem.  It is pervasive.  Do not rely
+on this module (or perl) to process long inputs on affected perl versions.
+
+This bug does not affect the L<XML::Easy::Text> parser.
+
 =head1 SEE ALSO
 
-L<XML::Easy>,
+L<XML::Easy::Text>,
 L<http://www.w3.org/TR/REC-xml/>
 
 =head1 AUTHOR
 
-Andrew Main (Zefram) <zefram@fysh.org> 
+Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2008 PhotoBox Ltd
+Copyright (C) 2008, 2009 PhotoBox Ltd
+
+Copyright (C) 2009 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
 
