@@ -123,7 +123,7 @@ static SV *upgrade_sv(SV *input)
 	U8 *p, *end;
 	STRLEN len;
 	if(SvUTF8(input)) return input;
-	p = SvPV(input, len);
+	p = (U8*)SvPV(input, len);
 	for(end = p + len; p != end; p++) {
 		if(*p & 0x80) {
 			SV *output = sv_mortalcopy(input);
@@ -141,9 +141,9 @@ static void upgrade_latin1_pvn(U8 **ptrp, STRLEN *lenp)
 	U8 *p = ptr, *end = ptr + len;
 	for(; p != end; p++) {
 		if(*p & 0x80) {
-			SV *output = sv_2mortal(newSVpvn(ptr, len));
+			SV *output = sv_2mortal(newSVpvn((char*)ptr, len));
 			sv_utf8_upgrade(output);
-			ptr = SvPV(output, len);
+			ptr = (U8*)SvPV(output, len);
 			*ptrp = ptr;
 			*lenp = len;
 			return;
@@ -742,10 +742,12 @@ static int char_is_s(U8 *p)
 	return 0;
 }
 
+#if 0 /* unused */
 static int ascii_codepoint_is_s(U8 c)
 {
 	return asciichar_attr[c] & CHARATTR_S;
 }
+#endif
 
 static int char_is_encstart(U8 *p)
 {
@@ -977,10 +979,10 @@ static U8 *parse_chars(U8 *p, SV *value, U8 endc, U32 flags)
 				STRLEN vlen;
 				U8 *vstart, *voldend, *vnewend;
 				if(lstart != lend)
-					sv_catpvn_nomg(value, lstart,
+					sv_catpvn_nomg(value, (char*)lstart,
 						lend-lstart);
 				vlen = SvCUR(value);
-				vstart = SvGROW(value, vlen+4+1);
+				vstart = (U8*)SvGROW(value, vlen+4+1);
 				voldend = vstart + vlen;
 				vnewend = uvuni_to_utf8_flags(voldend, val,
 						UNICODE_ALLOW_ANY);
@@ -993,7 +995,7 @@ static U8 *parse_chars(U8 *p, SV *value, U8 endc, U32 flags)
 			p += UTF8SKIP(p);
 		}
 	}
-	if(lstart != p) sv_catpvn_nomg(value, lstart, p-lstart);
+	if(lstart != p) sv_catpvn_nomg(value, (char*)lstart, p-lstart);
 	return p;
 }
 
@@ -1132,7 +1134,7 @@ static SV *parse_element(U8 **pp)
 	typename_start = ++p;
 	typename_len = parse_name(p);
 	p += typename_len;
-	typename = newSVpvn(typename_start, typename_len);
+	typename = newSVpvn((char*)typename_start, typename_len);
 	SvUTF8_on(typename);
 	SvREADONLY_on(typename);
 	element = newAV();
@@ -1153,7 +1155,7 @@ static SV *parse_element(U8 **pp)
 		namelen = parse_name(p);
 		namestart = p;
 		p += namelen;
-		if(hv_exists(attrs, namestart, -namelen))
+		if(hv_exists(attrs, (char*)namestart, -namelen))
 			throw_wfc_error("duplicate attribute");
 		p = parse_eq(p);
 		c = *p;
@@ -1164,13 +1166,12 @@ static SV *parse_element(U8 **pp)
 			CHARDATA_AMP_REF|CHARDATA_LT_ERR|CHARDATA_S_LINEAR)
 				+ 1;
 		SvREADONLY_on(attval);
-		hv_store(attrs, namestart, -namelen, SvREFCNT_inc(attval), 0);
+		if(!hv_store(attrs, (char*)namestart, -namelen,
+				SvREFCNT_inc(attval), 0))
+			SvREFCNT_dec(attval);
 	}
 	SvREADONLY_on((SV*)attrs);
 	if(c == '/') {
-		SV *chardata;
-		AV *content;
-		SV *cref;
 		if(*++p != '>') throw_syntax_error(p);
 		av_push(element, SvREFCNT_inc(empty_content_object));
 	} else {
@@ -1203,7 +1204,9 @@ static SV *parse_element(U8 **pp)
 
 static U8 *parse_opt_xmldecl(U8 *p, U32 allow, U32 require)
 {
+#if 0 /* unused, because throw_syntax_error() ignores its argument */
 	U8 *start = p;
+#endif
 	U32 found = 0;
 	if(!(p[0] == '<' && p[1] == '?' && p[2] == 'x' && p[3] == 'm' &&
 			p[4] == 'l' && p[5] <= 0x20))
@@ -1305,7 +1308,7 @@ static void check_encname(SV *enc)
 	STRLEN len;
 	if(!sv_is_string(enc))
 		throw_data_error("encoding name isn't a string");
-	p = SvPV(enc, len);
+	p = (U8*)SvPV(enc, len);
 	if(len == 0) throw_data_error("illegal encoding name");
 	end = p + len;
 	if(!char_is_encstart(p)) throw_data_error("illegal encoding name");
@@ -1336,7 +1339,7 @@ static void serialise_chardata(SV *out, SV *data)
 	if(!sv_is_string(data))
 		throw_data_error("character data isn't a string");
 	data = upgrade_sv(data);
-	datastart = SvPV(data, datalen);
+	datastart = (U8*)SvPV(data, datalen);
 	dataend = datastart + datalen;
 	lstart = p = datastart;
 	while(1) {
@@ -1346,10 +1349,11 @@ static void serialise_chardata(SV *out, SV *data)
 				(c == '>' && p-lstart >= 2 &&
 				 p[-1] == ']' && p[-2] == ']')) {
 			U8 refbuf[6] = "&#xXX;";
-			if(lstart != p) sv_catpvn_nomg(out, lstart, p-lstart);
+			if(lstart != p)
+				sv_catpvn_nomg(out, (char*)lstart, p-lstart);
 			refbuf[3] = hexdig[c >> 4];
 			refbuf[4] = hexdig[c & 0xf];
-			sv_catpvn(out, refbuf, 6);
+			sv_catpvn(out, (char*)refbuf, 6);
 			lstart = ++p;
 		} else {
 			if(!char_is_char(p))
@@ -1360,7 +1364,7 @@ static void serialise_chardata(SV *out, SV *data)
 	}
 	if(p != dataend)
 		throw_data_error("character data contains illegal character");
-	if(lstart != p) sv_catpvn_nomg(out, lstart, p-lstart);
+	if(lstart != p) sv_catpvn_nomg(out, (char*)lstart, p-lstart);
 }
 
 static void serialise_element(SV *out, SV *elem);
@@ -1410,10 +1414,12 @@ static void serialise_content_object(SV *out, SV *cref)
 static void serialise_content_eitherway(SV *out, SV *cref)
 {
 	SV *tgt;
-	return SvROK(cref) && (tgt = SvRV(cref), SvTYPE(tgt) == SVt_PVAV) &&
-			!SvSTASH(tgt) ?
-		serialise_content_array(out, cref) :
+	if(SvROK(cref) && (tgt = SvRV(cref), SvTYPE(tgt) == SVt_PVAV) &&
+			!SvSTASH(tgt)) {
+		serialise_content_array(out, cref);
+	} else {
 		serialise_content_object(out, cref);
+	}
 }
 
 static int content_array_is_empty(SV *cref)
@@ -1452,7 +1458,7 @@ static void serialise_attvalue(SV *out, SV *data)
 	if(!sv_is_string(data))
 		throw_data_error("character data isn't a string");
 	data = upgrade_sv(data);
-	datastart = SvPV(data, datalen);
+	datastart = (U8*)SvPV(data, datalen);
 	dataend = datastart + datalen;
 	lstart = p = datastart;
 	while(1) {
@@ -1461,10 +1467,11 @@ static void serialise_attvalue(SV *out, SV *data)
 		if(c == 0x9 || c == 0xa || c == 0xd || c == '<' || c == '&' ||
 				c == '"') {
 			U8 refbuf[6] = "&#xXX;";
-			if(lstart != p) sv_catpvn_nomg(out, lstart, p-lstart);
+			if(lstart != p)
+				sv_catpvn_nomg(out, (char*)lstart, p-lstart);
 			refbuf[3] = hexdig[c >> 4];
 			refbuf[4] = hexdig[c & 0xf];
-			sv_catpvn(out, refbuf, 6);
+			sv_catpvn(out, (char*)refbuf, 6);
 			lstart = ++p;
 		} else {
 			if(!char_is_char(p))
@@ -1475,7 +1482,7 @@ static void serialise_attvalue(SV *out, SV *data)
 	}
 	if(p != dataend)
 		throw_data_error("character data contains illegal character");
-	if(lstart != p) sv_catpvn_nomg(out, lstart, p-lstart);
+	if(lstart != p) sv_catpvn_nomg(out, (char*)lstart, p-lstart);
 }
 
 static void serialise_element(SV *out, SV *eref)
@@ -1500,10 +1507,10 @@ static void serialise_element(SV *out, SV *eref)
 	if(!sv_is_string(typename))
 		throw_data_error("element type name isn't a string");
 	typename = upgrade_sv(typename);
-	typename_start = SvPV(typename, typename_len);
+	typename_start = (U8*)SvPV(typename, typename_len);
 	if(!is_name(typename_start, typename_len))
 		throw_data_error("illegal element type name");
-	sv_catpvn_nomg(out, typename_start, typename_len);
+	sv_catpvn_nomg(out, (char*)typename_start, typename_len);
 	item_ptr = av_fetch(earr, 1, 0);
 	if(!item_ptr) throw_data_error("attribute hash isn't a hash");
 	attrs = *item_ptr;
@@ -1518,11 +1525,11 @@ static void serialise_element(SV *out, SV *eref)
 			U8 *key;
 			HE *ent = hv_iternext(ahash);
 			sv_catpvn_nomg(out, " ", 1);
-			key = HePV(ent, klen);
+			key = (U8*)HePV(ent, klen);
 			if(!HeKUTF8(ent)) upgrade_latin1_pvn(&key, &klen);
 			if(!is_name(key, klen))
 				throw_data_error("illegal attribute name");
-			sv_catpvn_nomg(out, key, klen);
+			sv_catpvn_nomg(out, (char*)key, klen);
 			sv_catpvn_nomg(out, "=\"", 2);
 			serialise_attvalue(out, HeVAL(ent));
 			sv_catpvn_nomg(out, "\"", 1);
@@ -1544,14 +1551,15 @@ static void serialise_element(SV *out, SV *eref)
 				U8 *key;
 				sv_catpvn_nomg(out, " ", 1);
 				keysv = *av_fetch(keys, i, 0);
-				key = SvPV(keysv, klen);
+				key = (U8*)SvPV(keysv, klen);
 				if(!is_name(key, klen))
 					throw_data_error("illegal attribute "
 							 "name");
-				sv_catpvn_nomg(out, key, klen);
+				sv_catpvn_nomg(out, (char*)key, klen);
 				sv_catpvn_nomg(out, "=\"", 2);
 				serialise_attvalue(out,
-					*hv_fetch(ahash, key, -klen, 0));
+					*hv_fetch(ahash, (char*)key, -klen,
+						0));
 				sv_catpvn_nomg(out, "\"", 1);
 			}
 		}
@@ -1565,7 +1573,7 @@ static void serialise_element(SV *out, SV *eref)
 		sv_catpvn_nomg(out, ">", 1);
 		serialise_content_object(out, content);
 		sv_catpvn_nomg(out, "</", 2);
-		sv_catpvn_nomg(out, typename_start, typename_len);
+		sv_catpvn_nomg(out, (char*)typename_start, typename_len);
 		sv_catpvn_nomg(out, ">", 1);
 	}
 }
@@ -1608,7 +1616,7 @@ INIT:
 CODE:
 	if(!sv_is_string(text_sv)) throw_data_error("text isn't a string");
 	text_sv = upgrade_sv(text_sv);
-	p = SvPV(text_sv, text_len);
+	p = (U8*)SvPV(text_sv, text_len);
 	end = p + text_len;
 	RETVAL = parse_content_object(&p, CONTENT_TOPLEVEL);
 	if(p != end) throw_syntax_error(p);
@@ -1625,7 +1633,7 @@ INIT:
 CODE:
 	if(!sv_is_string(text_sv)) throw_data_error("text isn't a string");
 	text_sv = upgrade_sv(text_sv);
-	p = SvPV(text_sv, text_len);
+	p = (U8*)SvPV(text_sv, text_len);
 	end = p + text_len;
 	RETVAL = parse_content_array(&p, CONTENT_TOPLEVEL);
 	if(p != end) throw_syntax_error(p);
@@ -1642,7 +1650,7 @@ INIT:
 CODE:
 	if(!sv_is_string(text_sv)) throw_data_error("text isn't a string");
 	text_sv = upgrade_sv(text_sv);
-	p = SvPV(text_sv, text_len);
+	p = (U8*)SvPV(text_sv, text_len);
 	end = p + text_len;
 	RETVAL = parse_element(&p);
 	if(p != end) throw_syntax_error(p);
@@ -1659,7 +1667,7 @@ INIT:
 CODE:
 	if(!sv_is_string(text_sv)) throw_data_error("text isn't a string");
 	text_sv = upgrade_sv(text_sv);
-	p = SvPV(text_sv, text_len);
+	p = (U8*)SvPV(text_sv, text_len);
 	end = p + text_len;
 	p = parse_opt_xmldecl(p,
 		XMLDECL_VERSION|XMLDECL_ENCODING|XMLDECL_STANDALONE,
@@ -1681,7 +1689,7 @@ INIT:
 CODE:
 	if(!sv_is_string(text_sv)) throw_data_error("text isn't a string");
 	text_sv = upgrade_sv(text_sv);
-	p = SvPV(text_sv, text_len);
+	p = (U8*)SvPV(text_sv, text_len);
 	end = p + text_len;
 	p = parse_opt_xmldecl(p, XMLDECL_VERSION|XMLDECL_ENCODING,
 		XMLDECL_ENCODING);
@@ -1700,7 +1708,7 @@ INIT:
 CODE:
 	if(!sv_is_string(text_sv)) throw_data_error("text isn't a string");
 	text_sv = upgrade_sv(text_sv);
-	p = SvPV(text_sv, text_len);
+	p = (U8*)SvPV(text_sv, text_len);
 	end = p + text_len;
 	p = parse_opt_xmldecl(p, XMLDECL_VERSION|XMLDECL_ENCODING,
 		XMLDECL_ENCODING);

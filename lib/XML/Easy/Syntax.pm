@@ -45,7 +45,7 @@ our @EXPORT_OK = qw(
 	$xml10_prolog_xdtd_rx $xml10_document_xdtd_rx $xml10_extparsedent_rx
 );
 
-our $VERSION = "0.001";
+our $VERSION = "0.002";
 
 sub _charclass_regexp($) {
 	my($class) = @_;
@@ -1137,7 +1137,8 @@ In some cases, but not all, a false match failure is preceded by a warning
 "Complex regular subexpression recursion limit (32766) exceeded".
 
 This bug is present, in various forms, in all perl versions up to at
-least 5.8.9 and 5.10.0.
+least 5.8.9 and 5.10.0.  Pre-5.10 perls may also overflow their stack
+space, in similar circumstances, if a resource limit is imposed.
 
 There is no known feasible workaround for this perl bug.  The regular
 expressions supplied by this module will therefore, unavoidably, fail

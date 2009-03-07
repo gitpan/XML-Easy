@@ -33,7 +33,15 @@ my %recogniser = (
 	x => qr/\A$xml10_extparsedent_rx\z/o,
 );
 
-my $perl_bug = do {
+# This code checks whether the regexp iteration limit bug (#60034) is
+# present.  The regexp match expression checks for getting the wrong
+# result with a long input, and suffices to diagnose the bug.  However,
+# running that test on a pre-5.10 perl causes the stack to grow large,
+# and if there's a limited stack size then this may overflow it and
+# cause perl to crash.  All pre-5.10 perls have the iteration limit
+# bug, so there's no need to run the proper test on those verions.
+# 5.10 fixed the stack issue, so it's safe to run the proper test there.
+my $have_iterlimit_bug = $] < 5.010 || do {
 	local $SIG{__WARN__} = sub { };
 	("a"x40000) !~ /\A(?:X?[a-z])*\z/;
 };
@@ -67,7 +75,7 @@ while(1) {
 	}
 	SKIP: {
 		skip "perl bug affects long inputs", 2
-			if $perl_bug && length($input) >= 32766;
+			if $have_iterlimit_bug && length($input) >= 32766;
 		is upgraded($input) =~ $recogniser{$prod}, !$syntax_error;
 		is downgraded($input) =~ $recogniser{$prod}, !$syntax_error;
 	}

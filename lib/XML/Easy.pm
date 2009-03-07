@@ -96,7 +96,7 @@ package XML::Easy;
 use warnings;
 use strict;
 
-our $VERSION = "0.001";
+our $VERSION = "0.002";
 
 use base "Exporter";
 our @EXPORT_OK = qw(

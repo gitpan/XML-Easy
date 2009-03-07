@@ -67,7 +67,7 @@ BEGIN {
 	}
 }
 
-our $VERSION = "0.001";
+our $VERSION = "0.002";
 
 sub _throw_data_error($) {
 	my($msg) = @_;

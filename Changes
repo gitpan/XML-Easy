@@ -1,3 +1,23 @@
+version 0.002; 2009-03-07
+
+  * in t/syntax_main.t, shortcut test for regexp iteration limit bug on
+    pre-5.10 perls, because the test is liable to overflow the stack
+
+  * work around Module::Build bug that was causing broken
+    ExtUtils::CBuilder objects that failed to compile anything
+
+  * to check whether C compilation is available, use Module::Build's
+    more robust ->have_c_compiler method, rather than just checking for
+    the availability of a C builder object
+
+  * avoid return with expression in void function (not valid in C90)
+
+  * add casts for pointer target signedness, and other small changes to
+    the C code, to avoid compiler warnings
+
+  * in XML::Eay::Syntax documentation, note the possibility of pre-5.10
+    perls overflowing the stack when executing regexps
+
 version 0.001; 2009-03-03
 
   * introduce class XML::Easy::Content to encapsulate XML content
