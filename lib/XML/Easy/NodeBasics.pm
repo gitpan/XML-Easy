@@ -73,9 +73,9 @@ BEGIN {
 	}
 }
 
-our $VERSION = "0.002";
+our $VERSION = "0.003";
 
-use base "Exporter";
+use parent "Exporter";
 our @EXPORT_OK = qw(
 	xml_content_object xml_content xml_element
 	xml_c_content_object xml_c_content

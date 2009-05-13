@@ -15,23 +15,23 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 c6ecf9058f98bdd57766cf64cc665f0eceb4a6c3 .cvsignore
-SHA1 fa334d4a56a5566d8498dc6dab6524bcd15e7268 Build.PL
-SHA1 84e1e2ac044b6035c94342bc439b6bf9f7a3d16c Changes
+SHA1 e90dcf4fbe8fa0a562d2c97a3a4d173244d94cde Build.PL
+SHA1 dd7a1d9d00c672cd0fbc824d9402e6e2d0c1533c Changes
 SHA1 def20fb769670d24ac0fdca532536675d5a82db7 MANIFEST
-SHA1 99e2d322b7d27e227ec1c6ec93861e0c0a6b6d22 META.yml
+SHA1 6c53d4c48326305f6940d489c7e1824c1f4de329 META.yml
 SHA1 2ee631405ce8597a9676b22fa640df3adf273015 Makefile.PL
 SHA1 7aa23cb7693b7e313a7dbbabfb67d3c6d34d77b2 README
 SHA1 2e7605f4c12931f9bc45b9449e8ed4a0f372a6c0 lib/XML/.cvsignore
-SHA1 eb6ad205e3ba7956f67b03fc3c15cf9eea40a0d9 lib/XML/Easy.pm
-SHA1 848250eb702e1f44925a34f288b701fc72fbd262 lib/XML/Easy.xs
-SHA1 e8bc104423eb9cf45ec867ff2ac4bdc70c346543 lib/XML/Easy/Classify.pm
-SHA1 710f8a4cc9fb45d2d866971c0776b0b3ec6e59a3 lib/XML/Easy/Content.pm
-SHA1 088a9493f7ffcd0fa741bc04a9abf5b55d3d1d5e lib/XML/Easy/Element.pm
-SHA1 156bd7870f1ed209960b228e43e1cbd5a6607cb4 lib/XML/Easy/NodeBasics.pm
-SHA1 cdf8fd8c3840284697e5100bad1fbd1c2d88cc76 lib/XML/Easy/Syntax.pm
-SHA1 89f2cbfe8c66e5fc87d5faaa97b1ce04f64276a5 lib/XML/Easy/Text.pm
-SHA1 6b72c5ef12f102dda97ff3042436c6c9dd0baaf5 t/DataSets.pm
-SHA1 4571ee1dc17d88a37bdd4bae184defb90b91e1c0 t/ErrorCases.pm
+SHA1 580499d2f2dcb56e8d096d0fddbb9b49851885ae lib/XML/Easy.pm
+SHA1 e35c5f9643b9ba4dc0e1d17b053c45867429f498 lib/XML/Easy.xs
+SHA1 9babb2034f7406b7af6202ef0c293f1e23431e5b lib/XML/Easy/Classify.pm
+SHA1 dd2b3f7b82fbedf38d1a780ea0f51fbc97ef1cec lib/XML/Easy/Content.pm
+SHA1 96dab5bad70871679db7bbaeff9547d8b48985d7 lib/XML/Easy/Element.pm
+SHA1 cedeebd53156a5153526ecba370d06139e7cb97a lib/XML/Easy/NodeBasics.pm
+SHA1 6433fc3f2da8a074821086906409de6d12b0f3ab lib/XML/Easy/Syntax.pm
+SHA1 bf2c94db1742e2720f9682854e2eacd12278f639 lib/XML/Easy/Text.pm
+SHA1 f8a0d1a97eef8a6f646899f12e33249ce2c4f842 t/DataSets.pm
+SHA1 742a80996ed5819d001e83955eba5bb4d811fe95 t/ErrorCases.pm
 SHA1 3815fe5ffebea9d549ed521f9ce66786baa2d092 t/classify.t
 SHA1 9fbd1badd64a24c882919d3ae79d58fe31f0aa69 t/easy_module.t
 SHA1 705e274215fc6ae1b5faabea52b16d6ea15d189e t/easy_module_pp.t
@@ -50,7 +50,7 @@ SHA1 4583c824a750986e01d992d4f8b92b58e70f122c t/write_pp.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkmyDWEACgkQOV9mt2VyAVHt0ACffBeMkA8NBLZsq6Ott/gl6yAS
-DMgAoJt8+F5yW/+DHxFhLzTg4H4nB6W2
-=OTs1
+iEYEARECAAYFAkoLJhQACgkQOV9mt2VyAVHe8ACfWHLEh+rksSXY8yDWmStbNp2o
+mNUAnifv+2w2BPD2MbTiye6DFsE8JKV0
+=O/Dj
 -----END PGP SIGNATURE-----

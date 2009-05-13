@@ -1,3 +1,13 @@
+version 0.003; 2009-05-13
+
+  * in XS code, use the correct "PREINIT:" instead of "INIT:" to introduce
+    variable declarations
+
+  * in XS code, use the cheaper SvOBJECT() in place of truth-value uses
+    of SvSTASH()
+
+  * use simpler "parent" pragma in place of "base"
+
 version 0.002; 2009-03-07
 
   * in t/syntax_main.t, shortcut test for regexp iteration limit bug on

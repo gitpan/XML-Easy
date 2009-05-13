@@ -7,7 +7,7 @@ use Params::Classify qw(is_string is_ref is_strictly_blessed);
 use XML::Easy::Content ();
 use XML::Easy::Element ();
 
-use base "Exporter";
+use parent "Exporter";
 our @EXPORT_OK = map { ("COUNT_$_", "foreach_$_") } (
 	(map { ("no_$_") } qw(
 		string

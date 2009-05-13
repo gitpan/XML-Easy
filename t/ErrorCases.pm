@@ -19,7 +19,7 @@ use t::DataSets (map { ("COUNT_$_", "foreach_$_") } qw(
 	string_no_chardata
 ));
 
-use base "Exporter";
+use parent "Exporter";
 our @EXPORT_OK = map { ("COUNT_$_", "test_$_") } qw(
 	error_text
 	error_type_name

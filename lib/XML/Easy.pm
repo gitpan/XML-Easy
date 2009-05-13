@@ -96,9 +96,9 @@ package XML::Easy;
 use warnings;
 use strict;
 
-our $VERSION = "0.002";
+our $VERSION = "0.003";
 
-use base "Exporter";
+use parent "Exporter";
 our @EXPORT_OK = qw(
 	xml10_read_content xml10_read_element
 	xml10_read_document xml10_read_extparsedent

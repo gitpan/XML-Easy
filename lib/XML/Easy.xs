@@ -1376,7 +1376,7 @@ static void serialise_content_array(SV *out, SV *caref)
 	SV **item_ptr;
 	if(!SvROK(caref)) throw_data_error("content array isn't an array");
 	carr = (AV*)SvRV(caref);
-	if(SvTYPE((SV*)carr) != SVt_PVAV || SvSTASH((SV*)carr))
+	if(SvTYPE((SV*)carr) != SVt_PVAV || SvOBJECT((SV*)carr))
 		throw_data_error("content array isn't an array");
 	clen = av_len(carr);
 	if(clen & 1) throw_data_error("content array has even length");
@@ -1415,7 +1415,7 @@ static void serialise_content_eitherway(SV *out, SV *cref)
 {
 	SV *tgt;
 	if(SvROK(cref) && (tgt = SvRV(cref), SvTYPE(tgt) == SVt_PVAV) &&
-			!SvSTASH(tgt)) {
+			!SvOBJECT(tgt)) {
 		serialise_content_array(out, cref);
 	} else {
 		serialise_content_object(out, cref);
@@ -1429,7 +1429,7 @@ static int content_array_is_empty(SV *cref)
 	SV *item;
 	if(!SvROK(cref)) return 0;
 	carr = (AV*)SvRV(cref);
-	if(SvTYPE((SV*)carr) != SVt_PVAV || SvSTASH((SV*)carr)) return 0;
+	if(SvTYPE((SV*)carr) != SVt_PVAV || SvOBJECT((SV*)carr)) return 0;
 	if(av_len(carr) != 0) return 0;
 	item_ptr = av_fetch(carr, 0, 0);
 	if(!item_ptr) return 0;
@@ -1516,7 +1516,7 @@ static void serialise_element(SV *out, SV *eref)
 	attrs = *item_ptr;
 	if(!SvROK(attrs)) throw_data_error("attribute hash isn't a hash");
 	ahash = (HV*)SvRV(attrs);
-	if(SvTYPE((SV*)ahash) != SVt_PVHV || SvSTASH((SV*)ahash))
+	if(SvTYPE((SV*)ahash) != SVt_PVHV || SvOBJECT((SV*)ahash))
 		throw_data_error("attribute hash isn't a hash");
 	nattrs = hv_iterinit(ahash);
 	if(nattrs != 0) {
@@ -1610,7 +1610,7 @@ BOOT:
 SV *
 xml10_read_content_object(SV *text_sv)
 PROTOTYPE: $
-INIT:
+PREINIT:
 	STRLEN text_len;
 	U8 *p, *end;
 CODE:
@@ -1627,7 +1627,7 @@ OUTPUT:
 SV *
 xml10_read_content(SV *text_sv)
 PROTOTYPE: $
-INIT:
+PREINIT:
 	STRLEN text_len;
 	U8 *p, *end;
 CODE:
@@ -1644,7 +1644,7 @@ OUTPUT:
 SV *
 xml10_read_element(SV *text_sv)
 PROTOTYPE: $
-INIT:
+PREINIT:
 	STRLEN text_len;
 	U8 *p, *end;
 CODE:
@@ -1661,7 +1661,7 @@ OUTPUT:
 SV *
 xml10_read_document(SV *text_sv)
 PROTOTYPE: $
-INIT:
+PREINIT:
 	STRLEN text_len;
 	U8 *p, *end;
 CODE:
@@ -1683,7 +1683,7 @@ OUTPUT:
 SV *
 xml10_read_extparsedent_object(SV *text_sv)
 PROTOTYPE: $
-INIT:
+PREINIT:
 	STRLEN text_len;
 	U8 *p, *end;
 CODE:
@@ -1702,7 +1702,7 @@ OUTPUT:
 SV *
 xml10_read_extparsedent(SV *text_sv)
 PROTOTYPE: $
-INIT:
+PREINIT:
 	STRLEN text_len;
 	U8 *p, *end;
 CODE:
