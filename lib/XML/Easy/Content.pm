@@ -46,6 +46,35 @@ package XML::Easy::Content;
 use warnings;
 use strict;
 
+our $VERSION = "0.004";
+
+eval { local $SIG{__DIE__};
+	require XSLoader;
+	XSLoader::load("XML::Easy", $VERSION) unless defined &new;
+};
+
+if($@ eq "") {
+	close(DATA);
+} else {
+	(my $filename = __FILE__) =~ tr# -~##cd;
+	local $/ = undef;
+	my $pp_code = "#line 73 \"$filename\"\n".<DATA>;
+	close(DATA);
+	{
+		local $SIG{__DIE__};
+		eval $pp_code;
+	}
+	die $@ if $@ ne "";
+}
+
+1;
+
+__DATA__
+
+# Note perl bug: a bug in perl 5.8.{0..6} screws up __PACKAGE__ (used below)
+# for the eval.  Explicit package declaration here fixes it.
+package XML::Easy::Content;
+
 use Params::Classify 0.000 qw(is_string is_ref is_strictly_blessed);
 use XML::Easy::Syntax 0.000 qw($xml10_char_rx);
 
@@ -59,8 +88,6 @@ BEGIN {
 		*_set_readonly = sub { };
 	}
 }
-
-our $VERSION = "0.003";
 
 sub _throw_data_error($) {
 	my($msg) = @_;
@@ -152,7 +179,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2008 PhotoBox Ltd
+Copyright (C) 2008, 2009 PhotoBox Ltd
 
 Copyright (C) 2009 Andrew Main (Zefram) <zefram@fysh.org>
 

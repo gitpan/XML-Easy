@@ -91,7 +91,7 @@ static U32 char_unicode(U8 *p)
 		for(i = 6; i--; )
 			if((*++p & 0xc0) != 0x80)
 				throw_utf8_error();
-		return 0x7ffffff;
+		return 0x7fffffff;
 	} else {
 		U8 first_six = 0;
 		for(i = 6; i--; ) {
@@ -105,7 +105,7 @@ static U32 char_unicode(U8 *p)
 		for(i = 6; i--; )
 			if((*++p & 0xc0) != 0x80)
 				throw_utf8_error();
-		return 0x7ffffff;
+		return 0x7fffffff;
 	}
 	if(val == 0 && !(p[1] & req_c1))
 		throw_utf8_error();
@@ -681,6 +681,7 @@ static struct unicode_range const uniset_name[] = {
 static int nona_codepoint_is_in_set(U32 c, struct unicode_range const *rl,
 	struct unicode_range const *rr)
 {
+	rr--;
 	while(rl != rr) {
 		/* invariant: c >= rl->first && c < rr[1].first */
 		struct unicode_range const *rt = rl + ((rr-rl+1) >> 1);
@@ -780,6 +781,115 @@ static int char_is_char(U8 *p)
 	U8 c0 = *p;
 	if(!(c0 & 0x80)) return asciichar_attr[c0] & CHARATTR_CHAR;
 	return nona_codepoint_is_char(char_unicode(p));
+}
+
+/*
+ * XML node handling
+ */
+
+static SV *contentobject_contentarray(SV *cobj)
+{
+	AV *carr;
+	SV **item_ptr;
+	if(!SvROK(cobj))
+		throw_data_error("content data isn't a content chunk");
+	carr = (AV*)SvRV(cobj);
+	if(SvTYPE((SV*)carr) != SVt_PVAV || av_len(carr) != 0)
+		throw_data_error("content data isn't a content chunk");
+	if(SvSTASH((SV*)carr) != stash_content)
+		throw_data_error("content data isn't a content chunk");
+	item_ptr = av_fetch(carr, 0, 0);
+	if(!item_ptr) throw_data_error("content array isn't an array");
+	return *item_ptr;
+}
+
+static SV *contentarray_contentobject(SV *caref)
+{
+	AV *content = newAV();
+	SV *cref = sv_2mortal(newRV_noinc((SV*)content));
+	av_push(content, SvREFCNT_inc(caref));
+	sv_bless(cref, stash_content);
+	SvREADONLY_on((SV*)content);
+	SvREADONLY_on(cref);
+	return cref;
+}
+
+static AV *element_nodearray(SV *eref)
+{
+	AV *earr;
+	if(!SvROK(eref)) throw_data_error("element data isn't an element");
+	earr = (AV*)SvRV(eref);
+	if(SvTYPE((SV*)earr) != SVt_PVAV || av_len(earr) != 2)
+		throw_data_error("element data isn't an element");
+	if(SvSTASH((SV*)earr) != stash_element)
+		throw_data_error("element data isn't an element");
+	return earr;
+}
+
+static SV *userchardata_chardata(SV *idata)
+{
+	SV *odata;
+	U8 *p, *end;
+	STRLEN len;
+	if(!sv_is_string(idata))
+		throw_data_error("character data isn't a string");
+	odata = sv_mortalcopy(idata);
+	sv_utf8_upgrade(odata);
+	SvREADONLY_on(odata);
+	p = (U8*)SvPV(odata, len);
+	end = p + len;
+	while(*p != 0) {
+		if(!char_is_char(p))
+			throw_data_error("character data "
+				"contains illegal character");
+		p += UTF8SKIP(p);
+	}
+	if(p != end)
+		throw_data_error("character data contains illegal character");
+	return odata;
+}
+
+static SV *usercontentarray_contentarray(SV *icaref)
+{
+	SV *ocaref;
+	AV *icarr, *ocarr;
+	I32 clen, i;
+	if(!SvROK(icaref)) throw_data_error("content array isn't an array");
+	icarr = (AV*)SvRV(icaref);
+	if(SvTYPE((SV*)icarr) != SVt_PVAV || SvOBJECT((SV*)icarr))
+		throw_data_error("content array isn't an array");
+	clen = av_len(icarr);
+	if(clen & 1) throw_data_error("content array has even length");
+	ocarr = newAV();
+	ocaref = sv_2mortal(newRV_noinc((SV*)ocarr));
+	SvREADONLY_on(ocaref);
+	av_extend(ocarr, clen);
+	for(i = 0; ; i++) {
+		SV **item_ptr, *iitem, *oitem, *elem;
+		item_ptr = av_fetch(icarr, i, 0);
+		if(!item_ptr)
+			throw_data_error("character data isn't a string");
+		iitem = *item_ptr;
+		if(!sv_is_string(iitem))
+			throw_data_error("character data isn't a string");
+		oitem = userchardata_chardata(iitem);
+		av_push(ocarr, SvREFCNT_inc(oitem));
+		if(i++ == clen) break;
+		item_ptr = av_fetch(icarr, i, 0);
+		if(!item_ptr)
+			throw_data_error("element data isn't an element");
+		iitem = *item_ptr;
+		if(!SvROK(iitem))
+			throw_data_error("element data isn't an element");
+		elem = SvRV(iitem);
+		if(SvSTASH(elem) != stash_element)
+			throw_data_error("element data isn't an element");
+		oitem = newRV_inc(elem);
+		SvREADONLY_on(oitem);
+		av_push(ocarr, SvREFCNT_inc(oitem));
+	}
+	SvREADONLY_on((SV*)ocarr);
+	return ocaref;
 }
 
 /*
@@ -1104,14 +1214,8 @@ static SV *parse_content_array(U8 **pp, U32 chardata_flags)
 
 static SV *parse_content_object(U8 **pp, U32 chardata_flags)
 {
-	SV *caref = parse_content_array(pp, chardata_flags);
-	AV *content = newAV();
-	SV *cref = sv_2mortal(newRV_noinc((SV*)content));
-	av_push(content, SvREFCNT_inc(caref));
-	sv_bless(cref, stash_content);
-	SvREADONLY_on((SV*)content);
-	SvREADONLY_on(cref);
-	return cref;
+	return contentarray_contentobject(
+		parse_content_array(pp, chardata_flags));
 }
 
 /* parse_element(): updates pointer in place, returns reference to AV blessed
@@ -1397,18 +1501,7 @@ static void serialise_content_array(SV *out, SV *caref)
 
 static void serialise_content_object(SV *out, SV *cref)
 {
-	AV *carr;
-	SV **item_ptr;
-	if(!SvROK(cref))
-		throw_data_error("content data isn't a content chunk");
-	carr = (AV*)SvRV(cref);
-	if(SvTYPE((SV*)carr) != SVt_PVAV || av_len(carr) != 0)
-		throw_data_error("content data isn't a content chunk");
-	if(SvSTASH((SV*)carr) != stash_content)
-		throw_data_error("content data isn't a content chunk");
-	item_ptr = av_fetch(carr, 0, 0);
-	if(!item_ptr) throw_data_error("content array isn't an array");
-	serialise_content_array(out, *item_ptr);
+	serialise_content_array(out, contentobject_contentarray(cref));
 }
 
 static void serialise_content_eitherway(SV *out, SV *cref)
@@ -1494,12 +1587,7 @@ static void serialise_element(SV *out, SV *eref)
 	U8 *typename_start;
 	STRLEN typename_len;
 	U32 nattrs;
-	if(!SvROK(eref)) throw_data_error("element data isn't an element");
-	earr = (AV*)SvRV(eref);
-	if(SvTYPE((SV*)earr) != SVt_PVAV || av_len(earr) != 2)
-		throw_data_error("element data isn't an element");
-	if(SvSTASH((SV*)earr) != stash_element)
-		throw_data_error("element data isn't an element");
+	earr = element_nodearray(eref);
 	sv_catpvn_nomg(out, "<", 1);
 	item_ptr = av_fetch(earr, 0, 0);
 	if(!item_ptr) throw_data_error("element type name isn't a string");
@@ -1578,7 +1666,7 @@ static void serialise_element(SV *out, SV *eref)
 	}
 }
 
-MODULE = XML::Easy PACKAGE = XML::Easy::Text
+MODULE = XML::Easy PACKAGE = XML::Easy::Content
 
 BOOT:
 	/* stash stashes */
@@ -1606,6 +1694,204 @@ BOOT:
 		SvREADONLY_on(cref);
 		empty_content_object = cref;
 	}
+
+SV *
+new(SV *class, SV *caref)
+CODE:
+	RETVAL = contentarray_contentobject(
+			usercontentarray_contentarray(caref));
+	SvREFCNT_inc(RETVAL);
+OUTPUT:
+	RETVAL
+
+SV *
+content(SV *cref)
+CODE:
+	RETVAL = contentobject_contentarray(cref);
+	SvREFCNT_inc(RETVAL);
+OUTPUT:
+	RETVAL
+
+MODULE = XML::Easy PACKAGE = XML::Easy::Element
+
+SV *
+new(SV *class, SV *type_name, SV *attrs, SV *content)
+PREINIT:
+	U8 *p;
+	STRLEN len;
+	HV *iahash, *oahash;
+	U32 nattrs;
+	SV *tgt;
+	AV *earr;
+CODE:
+	if(!sv_is_string(type_name))
+		throw_data_error("element type name isn't a string");
+	type_name = sv_mortalcopy(type_name);
+	sv_utf8_upgrade(type_name);
+	SvREADONLY_on(type_name);
+	p = (U8*)SvPV(type_name, len);
+	if(!is_name(p, len)) throw_data_error("illegal element type name");
+	if(!SvROK(attrs)) throw_data_error("attribute hash isn't a hash");
+	iahash = (HV*)SvRV(attrs);
+	if(SvTYPE((SV*)iahash) != SVt_PVHV || SvOBJECT((SV*)iahash))
+		throw_data_error("attribute hash isn't a hash");
+	oahash = newHV();
+	attrs = sv_2mortal(newRV_noinc((SV*)oahash));
+	SvREADONLY_on(attrs);
+	nattrs = hv_iterinit(iahash);
+	if(nattrs != 0) {
+		if(nattrs == 1) {
+			STRLEN klen;
+			U8 *key;
+			HE *ent = hv_iternext(iahash);
+			key = (U8*)HePV(ent, klen);
+			if(!HeKUTF8(ent)) upgrade_latin1_pvn(&key, &klen);
+			if(!is_name(key, klen))
+				throw_data_error("illegal attribute name");
+			tgt = userchardata_chardata(HeVAL(ent));
+			if(!hv_store(oahash, (char *)key, -klen,
+					SvREFCNT_inc(tgt), 0))
+				SvREFCNT_dec(tgt);
+		} else {
+			U32 i;
+			AV *keys = newAV();
+			sv_2mortal((SV*)keys);
+			av_extend(keys, nattrs-1);
+			for(i = nattrs; i--; ) {
+				SV *keysv = upgrade_sv(
+					hv_iterkeysv(hv_iternext(iahash)));
+				SvREFCNT_inc(keysv);
+				av_push(keys, keysv);
+			}
+			sortsv(AvARRAY(keys), nattrs, Perl_sv_cmp);
+			for(i = 0; i != nattrs; i++) {
+				SV *keysv;
+				STRLEN klen;
+				U8 *key;
+				keysv = *av_fetch(keys, i, 0);
+				key = (U8*)SvPV(keysv, klen);
+				if(!is_name(key, klen))
+					throw_data_error("illegal attribute "
+							 "name");
+				tgt = *hv_fetch(iahash, (char*)key, -klen, 0);
+				tgt = userchardata_chardata(tgt);
+				if(!hv_store(oahash, (char *)key, -klen,
+						SvREFCNT_inc(tgt), 0))
+					SvREFCNT_dec(tgt);
+			}
+		}
+	}
+	SvREADONLY_on((SV*)oahash);
+	if(!SvROK(content))
+		throw_data_error("content data isn't a content chunk");
+	tgt = SvRV(content);
+	if(!SvOBJECT(tgt) && SvTYPE(tgt) == SVt_PVAV) {
+		content = contentarray_contentobject(
+				usercontentarray_contentarray(content));
+	} else if(SvSTASH(tgt) == stash_content) {
+		content = sv_2mortal(newRV_inc(tgt));
+		SvREADONLY_on(content);
+	} else {
+		throw_data_error("content data isn't a content chunk");
+	}
+	earr = newAV();
+	av_extend(earr, 2);
+	av_push(earr, SvREFCNT_inc(type_name));
+	av_push(earr, SvREFCNT_inc(attrs));
+	av_push(earr, SvREFCNT_inc(content));
+	RETVAL = newRV_noinc((SV*)earr);
+	sv_bless(RETVAL, stash_element);
+	SvREADONLY_on(earr);
+	SvREADONLY_on(RETVAL);
+OUTPUT:
+	RETVAL
+
+SV *
+type_name(SV *eref)
+PREINIT:
+	AV *earr;
+	SV **item_ptr;
+CODE:
+	earr = element_nodearray(eref);
+	item_ptr = av_fetch(earr, 0, 0);
+	if(!item_ptr) throw_data_error("element type name isn't a string");
+	RETVAL = SvREFCNT_inc(*item_ptr);
+OUTPUT:
+	RETVAL
+
+SV *
+attributes(SV *eref)
+PREINIT:
+	AV *earr;
+	SV **item_ptr;
+CODE:
+	earr = element_nodearray(eref);
+	item_ptr = av_fetch(earr, 1, 0);
+	if(!item_ptr) throw_data_error("attribute hash isn't a hash");
+	RETVAL = SvREFCNT_inc(*item_ptr);
+OUTPUT:
+	RETVAL
+
+SV *
+attribute(SV *eref, SV *attrname_sv)
+PREINIT:
+	U8 *attrname;
+	STRLEN attrname_len;
+	AV *earr;
+	HV *ahash;
+	SV **item_ptr, *attrs;
+CODE:
+	if(!sv_is_string(attrname_sv))
+		throw_data_error("attribute name isn't a string");
+	attrname_sv = upgrade_sv(attrname_sv);
+	attrname = (U8*)SvPV(attrname_sv, attrname_len);
+	if(!is_name(attrname, attrname_len))
+		throw_data_error("illegal attribute name");
+	earr = element_nodearray(eref);
+	item_ptr = av_fetch(earr, 1, 0);
+	if(!item_ptr) throw_data_error("attribute hash isn't a hash");
+	attrs = *item_ptr;
+	if(!SvROK(attrs)) throw_data_error("attribute hash isn't a hash");
+	ahash = (HV*)SvRV(attrs);
+	if(SvTYPE((SV*)ahash) != SVt_PVHV || SvOBJECT((SV*)ahash))
+		throw_data_error("attribute hash isn't a hash");
+	if(hv_exists(ahash, (char *)attrname, -attrname_len)) {
+		item_ptr = hv_fetch(ahash, (char *)attrname, -attrname_len, 0);
+		RETVAL = item_ptr ? SvREFCNT_inc(*item_ptr) : &PL_sv_undef;
+	} else {
+		RETVAL = &PL_sv_undef;
+	}
+OUTPUT:
+	RETVAL
+
+SV *
+content_object(SV *eref)
+PREINIT:
+	AV *earr;
+	SV **item_ptr;
+CODE:
+	earr = element_nodearray(eref);
+	item_ptr = av_fetch(earr, 2, 0);
+	if(!item_ptr) throw_data_error("content data isn't a content chunk");
+	RETVAL = SvREFCNT_inc(*item_ptr);
+OUTPUT:
+	RETVAL
+
+SV *
+content(SV *eref)
+PREINIT:
+	AV *earr;
+	SV **item_ptr;
+CODE:
+	earr = element_nodearray(eref);
+	item_ptr = av_fetch(earr, 2, 0);
+	if(!item_ptr) throw_data_error("content data isn't a content chunk");
+	RETVAL = contentobject_contentarray(*item_ptr);
+	SvREFCNT_inc(RETVAL);
+OUTPUT:
+	RETVAL
+
+MODULE = XML::Easy PACKAGE = XML::Easy::Text
 
 SV *
 xml10_read_content_object(SV *text_sv)

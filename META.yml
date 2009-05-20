@@ -1,6 +1,6 @@
 ---
 name: XML-Easy
-version: 0.003
+version: 0.004
 author:
   - 'Andrew Main (Zefram) <zefram@fysh.org>'
 abstract: XML processing with a clean interface
@@ -32,25 +32,25 @@ dynamic_config: 1
 provides:
   XML::Easy:
     file: lib/XML/Easy.pm
-    version: 0.003
+    version: 0.004
   XML::Easy::Classify:
     file: lib/XML/Easy/Classify.pm
-    version: 0.003
+    version: 0.004
   XML::Easy::Content:
     file: lib/XML/Easy/Content.pm
-    version: 0.003
+    version: 0.004
   XML::Easy::Element:
     file: lib/XML/Easy/Element.pm
-    version: 0.003
+    version: 0.004
   XML::Easy::NodeBasics:
     file: lib/XML/Easy/NodeBasics.pm
-    version: 0.003
+    version: 0.004
   XML::Easy::Syntax:
     file: lib/XML/Easy/Syntax.pm
-    version: 0.003
+    version: 0.004
   XML::Easy::Text:
     file: lib/XML/Easy/Text.pm
-    version: 0.003
+    version: 0.004
 generated_by: Module::Build version 0.31012
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.2.html

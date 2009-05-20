@@ -1,3 +1,18 @@
+version 0.004; 2009-05-20
+
+  * bugfix: correct character classification code that was incorrectly
+    rejecting characters U+ac00 to U+d7a3 (precomposed Hangul syllables)
+    in XML names
+
+  * XS implementation of low-level constructors and accessors for element
+    and content nodes
+
+  * document the XML::Easy::Transform:: namespace
+
+  * in XS code, fix the char_unicode() function to return the documented
+    sentinel value (it was returning a different value than intended,
+    but one which still operated correctly)
+
 version 0.003; 2009-05-13
 
   * in XS code, use the correct "PREINIT:" instead of "INIT:" to introduce

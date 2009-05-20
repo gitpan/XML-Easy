@@ -55,7 +55,7 @@ use strict;
 use XML::Easy::Content 0.001 ();
 use XML::Easy::Element 0.001 ();
 
-our $VERSION = "0.003";
+our $VERSION = "0.004";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(
@@ -69,7 +69,8 @@ our @EXPORT_OK = qw(
 
 eval { local $SIG{__DIE__};
 	require XSLoader;
-	XSLoader::load("XML::Easy", $VERSION);
+	XSLoader::load("XML::Easy", $VERSION)
+		unless defined &xml10_write_document;
 };
 
 if($@ eq "") {

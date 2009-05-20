@@ -89,6 +89,10 @@ The L<XML::Easy::ProceduralWriter> module provides a way to build up
 XML data nodes by procedural code.  Some programmers will find this more
 comfortable than the functional style.
 
+The C<XML::Easy::Transform::> namespace exists to contain modules that
+perform transformations on XML documents, or parts thereof, in the form
+of L<XML::Easy::Element> and L<XML::Easy::Content> nodes.
+
 =cut
 
 package XML::Easy;
@@ -96,7 +100,7 @@ package XML::Easy;
 use warnings;
 use strict;
 
-our $VERSION = "0.003";
+our $VERSION = "0.004";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(

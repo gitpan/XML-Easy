@@ -45,7 +45,7 @@ our @EXPORT_OK = qw(
 	$xml10_prolog_xdtd_rx $xml10_document_xdtd_rx $xml10_extparsedent_rx
 );
 
-our $VERSION = "0.003";
+our $VERSION = "0.004";
 
 sub _charclass_regexp($) {
 	my($class) = @_;
