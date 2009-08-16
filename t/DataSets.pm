@@ -30,7 +30,7 @@ our @EXPORT_OK = map { ("COUNT_$_", "foreach_$_") } (
 		attributes
 	)),
 	(map { ("yes_$_", "array_no_$_", "no_$_") } qw(
-		content_array
+		content_twine
 	)),
 	(map { ("yes_$_", "no_$_") } qw(
 		content_object
@@ -440,8 +440,8 @@ sub foreach_no_content_object($) {
 }
 *COUNT_no_content_object = memoise sub { count(\&foreach_no_content_object) };
 
-*COUNT_yes_content_array = memoise sub { 3*COUNT_yes_chardata() };
-sub foreach_yes_content_array($) {
+*COUNT_yes_content_twine = memoise sub { 3*COUNT_yes_chardata() };
+sub foreach_yes_content_twine($) {
 	my($do) = @_;
 	foreach_yes_chardata sub {
 		$do->([ $_[0] ]);
@@ -453,9 +453,9 @@ sub foreach_yes_content_array($) {
 sub COUNT_no_element();
 sub foreach_no_element($);
 
-*COUNT_array_no_content_array =
+*COUNT_array_no_content_twine =
 	memoise sub { 2 + 3*COUNT_no_chardata() + COUNT_no_element() };
-sub foreach_array_no_content_array($) {
+sub foreach_array_no_content_twine($) {
 	my($do) = @_;
 	$do->($_) foreach [ ], [ "x", $e0 ];
 	foreach_no_chardata sub {
@@ -466,27 +466,27 @@ sub foreach_array_no_content_array($) {
 	foreach_no_element sub { $do->([ "x", $_[0], "y" ]) };
 }
 
-*COUNT_no_content_array =
-	memoise sub { COUNT_no_array() + COUNT_array_no_content_array() };
-sub foreach_no_content_array($) {
+*COUNT_no_content_twine =
+	memoise sub { COUNT_no_array() + COUNT_array_no_content_twine() };
+sub foreach_no_content_twine($) {
 	&foreach_no_array;
-	&foreach_array_no_content_array;
+	&foreach_array_no_content_twine;
 }
 
 *COUNT_yes_content =
-	memoise sub { COUNT_yes_content_object() + COUNT_yes_content_array() };
+	memoise sub { COUNT_yes_content_object() + COUNT_yes_content_twine() };
 sub foreach_yes_content($) {
 	&foreach_yes_content_object;
-	&foreach_yes_content_array;
+	&foreach_yes_content_twine;
 }
 
 *COUNT_no_content = memoise sub {
 	return COUNT_no_array_or_content_object() +
-		COUNT_array_no_content_array();
+		COUNT_array_no_content_twine();
 };
 sub foreach_no_content($) {
 	&foreach_no_array_or_content_object;
-	&foreach_array_no_content_array;
+	&foreach_array_no_content_twine;
 }
 
 *COUNT_yes_element = memoise sub { 1 };

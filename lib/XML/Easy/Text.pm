@@ -27,15 +27,14 @@ XML::Easy::Text - XML parsing and serialisation
 =head1 DESCRIPTION
 
 This module supplies functions that parse and serialise XML data
-according to the XML 1.0 specification.  The functions are implemented
-in C for performance, with a pure Perl backup version (which has good
-performance compared to other pure Perl parsers) for systems that can't
-handle XS modules.
+according to the XML 1.0 specification.
 
-This module is oriented towards the use of XML to represent data for
-interchange purposes, rather than the use of XML as markup of principally
-textual data.  It does not perform any schema processing, and does not
-interpret DTDs or any other kind of schema.
+This module is oriented towards the use of XML to represent data
+for interchange purposes, rather than the use of XML as markup of
+principally textual data.  It does not perform any schema processing,
+and does not interpret DTDs or any other kind of schema.  It adheres
+strictly to the XML specification, in all its awkward details, except
+for the aforementioned DTDs.
 
 XML data in memory is represented using a tree of
 L<XML::Easy::Content> and L<XML::Easy::Element>
@@ -44,6 +43,11 @@ of an XML element or document, without any irrelevant detail resulting
 from the textual syntax.
 These node trees are readily manipulated by the functions
 in L<XML::Easy::NodeBasics>.
+
+The functions of this module are implemented
+in C for performance, with a pure Perl backup version (which has good
+performance compared to other pure Perl parsers) for systems that can't
+handle XS modules.
 
 =cut
 
@@ -55,14 +59,16 @@ use strict;
 use XML::Easy::Content 0.001 ();
 use XML::Easy::Element 0.001 ();
 
-our $VERSION = "0.004";
+our $VERSION = "0.005";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(
-	xml10_read_content_object xml10_read_content
+	xml10_read_content_object xml10_read_content_twine
+	xml10_read_content
 	xml10_read_element
 	xml10_read_document
-	xml10_read_extparsedent_object xml10_read_extparsedent
+	xml10_read_extparsedent_object xml10_read_extparsedent_twine
+	xml10_read_extparsedent
 	xml10_write_content xml10_write_element
 	xml10_write_document xml10_write_extparsedent
 );
@@ -78,7 +84,7 @@ if($@ eq "") {
 } else {
 	(my $filename = __FILE__) =~ tr# -~##cd;
 	local $/ = undef;
-	my $pp_code = "#line 92 \"$filename\"\n".<DATA>;
+	my $pp_code = "#line 98 \"$filename\"\n".<DATA>;
 	close(DATA);
 	{
 		local $SIG{__DIE__};
@@ -86,6 +92,9 @@ if($@ eq "") {
 	}
 	die $@ if $@ ne "";
 }
+
+*xml10_read_content = \&xml10_read_content_twine;
+*xml10_read_extparsedent = \&xml10_read_extparsedent_twine;
 
 1;
 
@@ -205,9 +214,9 @@ sub _parse_attvalue($) {
 
 sub _parse_element($);
 
-sub _parse_content_array($) {
+sub _parse_twine($) {
 	my($rtext) = @_;
-	my @content = ("");
+	my @twine = ("");
 	while(1) {
 		# Note perl bug: in some versions of perl, including 5.8.8
 		# and 5.10.0, the "+" in the character-data regexp acts
@@ -229,28 +238,28 @@ sub _parse_content_array($) {
 				if $value =~ s/(?!\A)(\x{d}|\]\]?)\z//;
 			_throw_syntax_error($rtext) if $value =~ /\]\]>/;
 			$value =~ s/\x{d}\x{a}?/\x{a}/g;
-			$content[-1] .= $value;
+			$twine[-1] .= $value;
 		} elsif($$rtext =~ m#\G(?=<[^/?!])#gc) {
-			push @content, _parse_element($rtext), "";
+			push @twine, _parse_element($rtext), "";
 		} elsif($$rtext =~ /\G(?=&)/gc) {
-			$content[-1] .= _parse_reference($rtext);
+			$twine[-1] .= _parse_reference($rtext);
 		} elsif($$rtext =~ /\G<!\[CDATA\[($xml10_char_rx*?)\]\]>/ogc) {
 			my $value = $1;
 			$value =~ s/\x{d}\x{a}?/\x{a}/g;
-			$content[-1] .= $value;
+			$twine[-1] .= $value;
 		} elsif($$rtext =~ /\G(?:$xml10_pi_rx|$xml10_comment_rx)/ogc) {
 			# no content
 		} else {
-			return \@content;
+			return \@twine;
 		}
 	}
 }
 
-sub _parse_content_object($) {
-	return XML::Easy::Content->new(_parse_content_array($_[0]));
+sub _parse_contentobject($) {
+	return XML::Easy::Content->new(_parse_twine($_[0]));
 }
 
-my $empty_content_object = XML::Easy::Content->new([""]);
+my $empty_contentobject = XML::Easy::Content->new([""]);
 
 sub _parse_element($) {
 	my($rtext) = @_;
@@ -265,9 +274,9 @@ sub _parse_element($) {
 	$$rtext =~ m#\G(/)?>#gc or _throw_syntax_error($rtext);
 	my $content;
 	if(defined $1) {
-		$content = $empty_content_object;
+		$content = $empty_contentobject;
 	} else {
-		$content = _parse_content_object($rtext);
+		$content = _parse_contentobject($rtext);
 		$$rtext =~ m#\G</($xml10_name_rx)$xml10_s_rx?>#gc
 			or _throw_syntax_error($rtext);
 		_throw_wfc_error("mismatched tags") unless $1 eq $ename;
@@ -294,36 +303,35 @@ the full XML grammar.
 sub xml10_read_content_object($) {
 	_throw_data_error("text isn't a string") unless is_string($_[0]);
 	my($text) = @_;
-	my $content = _parse_content_object(\$text);
+	my $content = _parse_contentobject(\$text);
 	$text =~ /\G\z/gc or _throw_syntax_error(\$text);
 	return $content;
+}
+
+=item xml10_read_content_twine(TEXT)
+
+Performs the same parsing job as L</xml10_read_content_object>,
+but returns the resulting content chunk in the form of twine
+(see L<XML::Easy::NodeBasics/Twine>) rather than a content object.
+
+The returned array must not be subsequently modified.  If possible,
+it will be marked as read-only in order to prevent modification.
+
+=cut
+
+sub xml10_read_content_twine($) {
+	_throw_data_error("text isn't a string") unless is_string($_[0]);
+	my($text) = @_;
+	my $twine = _parse_twine(\$text);
+	$text =~ /\G\z/gc or _throw_syntax_error(\$text);
+	_set_readonly(\$_) foreach @$twine;
+	_set_readonly($twine);
+	return $twine;
 }
 
 =item xml10_read_content(TEXT)
 
-I<TEXT> must be a character string.  It is parsed against the B<content>
-production of the XML 1.0 grammar; i.e., as a sequence of the kind of
-matter that can appear between the start-tag and end-tag of an element.
-Returns a reference to an array listing the content in
-the canonical form that is returned by the C<content> accessor of
-L<XML::Easy::Content>.
-
-Normally one would not want to use this function directly, but prefer the
-higher-level C<xml10_read_document> function.  This function exists for
-the construction of custom XML parsers in situations that don't match
-the full XML grammar.
-
-=cut
-
-sub xml10_read_content($) {
-	_throw_data_error("text isn't a string") unless is_string($_[0]);
-	my($text) = @_;
-	my $content = _parse_content_array(\$text);
-	$text =~ /\G\z/gc or _throw_syntax_error(\$text);
-	_set_readonly(\$_) foreach @$content;
-	_set_readonly($content);
-	return $content;
-}
+Deprecated alias for L</xml10_read_content_twine>.
 
 =item xml10_read_element(TEXT)
 
@@ -392,38 +400,36 @@ sub xml10_read_extparsedent_object($) {
 	_throw_data_error("text isn't a string") unless is_string($_[0]);
 	my($text) = @_;
 	$text =~ /\A$xml10_textdecl_rx/gc;
-	my $content = _parse_content_object(\$text);
+	my $content = _parse_contentobject(\$text);
 	$text =~ /\G\z/gc or _throw_syntax_error(\$text);
 	return $content;
+}
+
+=item xml10_read_extparsedent_twine(TEXT)
+
+Performs the same parsing job as L</xml10_read_extparsedent_object>,
+but returns the resulting content chunk in the form of twine
+(see L<XML::Easy::NodeBasics/Twine>) rather than a content object.
+
+The returned array must not be subsequently modified.  If possible,
+it will be marked as read-only in order to prevent modification.
+
+=cut
+
+sub xml10_read_extparsedent_twine($) {
+	_throw_data_error("text isn't a string") unless is_string($_[0]);
+	my($text) = @_;
+	$text =~ /\A$xml10_textdecl_rx/gc;
+	my $twine = _parse_twine(\$text);
+	$text =~ /\G\z/gc or _throw_syntax_error(\$text);
+	_set_readonly(\$_) foreach @$twine;
+	_set_readonly($twine);
+	return $twine;
 }
 
 =item xml10_read_extparsedent(TEXT)
 
-I<TEXT> must be a character string.  It is parsed against the
-B<extParsedEnt> production of the XML 1.0 grammar; i.e., as a sequence
-of content (containing character data and subelements), possibly
-headed by a text declaration (which is similar to, but not the same
-as, an XML declaration).
-Returns a reference to an array listing the content in
-the canonical form that is returned by the C<content> accessor of
-L<XML::Easy::Content>.
-
-This is a relatively obscure part of the XML grammar, used when a
-subpart of a document is stored in a separate file.  You're more likely
-to require the C<xml10_read_document> function.
-
-=cut
-
-sub xml10_read_extparsedent($) {
-	_throw_data_error("text isn't a string") unless is_string($_[0]);
-	my($text) = @_;
-	$text =~ /\A$xml10_textdecl_rx/gc;
-	my $content = _parse_content_array(\$text);
-	$text =~ /\G\z/gc or _throw_syntax_error(\$text);
-	_set_readonly(\$_) foreach @$content;
-	_set_readonly($content);
-	return $content;
-}
+Deprecated alias for L</xml10_read_extparsedent_twine>.
 
 =back
 
@@ -479,32 +485,32 @@ sub _serialise_chardata($$) {
 
 sub _serialise_element($$);
 
-sub _serialise_content_array($$) {
-	my($rtext, $contarray) = @_;
+sub _serialise_twine($$) {
+	my($rtext, $twine) = @_;
 	_throw_data_error("content array isn't an array")
-		unless is_ref($contarray, "ARRAY");
+		unless is_ref($twine, "ARRAY");
 	_throw_data_error("content array has even length")
-		unless @$contarray % 2 == 1;
-	_serialise_chardata($rtext, $contarray->[0]);
-	my $ncont = @$contarray;
+		unless @$twine % 2 == 1;
+	_serialise_chardata($rtext, $twine->[0]);
+	my $ncont = @$twine;
 	for(my $i = 1; $i != $ncont; ) {
-		_serialise_element($rtext, $contarray->[$i++]);
-		_serialise_chardata($rtext, $contarray->[$i++]);
+		_serialise_element($rtext, $twine->[$i++]);
+		_serialise_chardata($rtext, $twine->[$i++]);
 	}
 }
 
-sub _serialise_content_object($$) {
+sub _serialise_contentobject($$) {
 	my($rtext, $content) = @_;
 	_throw_data_error("content data isn't a content chunk")
 		unless is_strictly_blessed($content, "XML::Easy::Content");
-	_serialise_content_array($rtext, $content->content);
+	_serialise_twine($rtext, $content->twine);
 }
 
-sub _serialise_content_eitherway($$) {
+sub _serialise_eithercontent($$) {
 	if(is_ref($_[1], "ARRAY")) {
-		goto &_serialise_content_array;
+		goto &_serialise_twine;
 	} else {
-		goto &_serialise_content_object;
+		goto &_serialise_contentobject;
 	}
 }
 
@@ -567,13 +573,13 @@ sub _serialise_element($$) {
 		_serialise_attvalue($rtext, $attributes->{$_});
 		$$rtext .= "\"";
 	}
-	my $content = $elem->content;
-	if(is_ref($content, "ARRAY") && @$content == 1 &&
-			is_string($content->[0]) && $content->[0] eq "") {
+	my $twine = $elem->content_twine;
+	if(is_ref($twine, "ARRAY") && @$twine == 1 &&
+			is_string($twine->[0]) && $twine->[0] eq "") {
 		$$rtext .= "/>";
 	} else {
 		$$rtext .= ">";
-		_serialise_content_array($rtext, $content);
+		_serialise_twine($rtext, $twine);
 		$$rtext .= "</".$type_name.">";
 	}
 }
@@ -583,16 +589,15 @@ sub _serialise_element($$) {
 =item xml10_write_content(CONTENT)
 
 I<CONTENT> must be a reference to either an L<XML::Easy::Content>
-object or an array of the type that can be passed to that class's
-C<new> constructor.  The XML 1.0 textual representation of that content
-is returned.
+object or a twine array (see L<XML::Easy::NodeBasics/Twine>).
+The XML 1.0 textual representation of that content is returned.
 
 =cut
 
 sub xml10_write_content($) {
 	my($content) = @_;
 	my $text = "";
-	_serialise_content_eitherway(\$text, $content);
+	_serialise_eithercontent(\$text, $content);
 	return $text;
 }
 
@@ -644,8 +649,8 @@ sub xml10_write_document($;$) {
 =item xml10_write_extparsedent(CONTENT[, ENCODING])
 
 I<CONTENT> must be a reference to either an L<XML::Easy::Content>
-object or an array of the type that can be passed to that class's C<new>
-constructor.  The XML 1.0 textual form of an external
+object or a twine array (see L<XML::Easy::NodeBasics/Twine>).
+The XML 1.0 textual form of an external
 parsed entity encapsulating that content is returned.  If I<ENCODING> is
 supplied, it must be a valid character encoding name, and the returned
 entity includes a text declaration that specifies the encoding name in
@@ -667,7 +672,7 @@ sub xml10_write_extparsedent($;$) {
 		}
 		$text .= "<?xml encoding=\"".$encname."\"?>";
 	}
-	_serialise_content_eitherway(\$text, $content);
+	_serialise_eithercontent(\$text, $content);
 	return $text;
 }
 

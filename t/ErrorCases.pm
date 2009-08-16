@@ -22,13 +22,14 @@ use t::DataSets (map { ("COUNT_$_", "foreach_$_") } qw(
 use parent "Exporter";
 our @EXPORT_OK = map { ("COUNT_$_", "test_$_") } qw(
 	error_text
+	error_name
 	error_type_name
 	error_attribute_name
 	error_encname
 	error_chardata
 	error_attributes
 	error_content_object
-	error_content_array
+	error_content_twine
 	error_content
 	error_element
 	error_content_item
@@ -45,6 +46,19 @@ sub test_error_text($) {
 	foreach_no_string sub {
 		eval { $func->($_[0]) };
 		is $@, "invalid XML data: text isn't a string\n";
+	};
+}
+
+sub COUNT_error_name() { COUNT_no_string + COUNT_string_no_name }
+sub test_error_name($) {
+	my($func) = @_;
+	foreach_no_string sub {
+		eval { $func->($_[0]) };
+		is $@, "invalid XML data: name isn't a string\n";
+	};
+	foreach_string_no_name sub {
+		eval { $func->($_[0]) };
+		is $@, "invalid XML data: illegal name\n";
 	};
 }
 
@@ -152,11 +166,11 @@ sub test_error_content_object($) {
 sub COUNT_error_element();
 sub test_error_element($);
 
-sub COUNT_error_content_array() {
+sub COUNT_error_content_twine() {
 	return COUNT_no_array + 4 +
 		COUNT_error_chardata*2 + COUNT_error_element*2;
 }
-sub test_error_content_array($) {
+sub test_error_content_twine($) {
 	my($func) = @_;
 	foreach_no_array sub {
 		eval { $func->($_[0]) };
@@ -183,7 +197,7 @@ sub test_error_content_array($) {
 }
 
 sub COUNT_error_content() {
-	return COUNT_error_content_object + COUNT_error_content_array;
+	return COUNT_error_content_object + COUNT_error_content_twine;
 }
 sub test_error_content($) {
 	my($func) = @_;
@@ -192,7 +206,7 @@ sub test_error_content($) {
 			if is_ref($_[0], "ARRAY");
 		$func->($_[0]);
 	};
-	test_error_content_array sub {
+	test_error_content_twine sub {
 		die "invalid XML data: content array isn't an array\n"
 			unless is_ref($_[0], "ARRAY");
 		$func->($_[0]);
@@ -210,7 +224,7 @@ sub test_error_element($) {
 
 sub COUNT_error_content_item() {
 	return COUNT_no_string_or_array_or_content_object_or_element +
-		COUNT_error_chardata + COUNT_error_content_array;
+		COUNT_error_chardata + COUNT_error_content_twine;
 }
 sub test_error_content_item($) {
 	my($func) = @_;
@@ -223,7 +237,7 @@ sub test_error_content_item($) {
 			unless is_string($_[0]);
 		$func->($_[0]);
 	};
-	test_error_content_array sub {
+	test_error_content_twine sub {
 		die "invalid XML data: content array isn't an array\n"
 			unless is_ref($_[0], "ARRAY");
 		$func->($_[0]);
@@ -231,12 +245,12 @@ sub test_error_content_item($) {
 }
 
 sub COUNT_error_content_recurse() {
-	return COUNT_error_content + COUNT_error_content_array;
+	return COUNT_error_content + COUNT_error_content_twine;
 }
 sub test_error_content_recurse($) {
 	my($func) = @_;
 	test_error_content $func;
-	test_error_content_array sub {
+	test_error_content_twine sub {
 		$func->(bless([ $_[0] ], "XML::Easy::Content"));
 	};
 }

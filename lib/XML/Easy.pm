@@ -2,6 +2,20 @@
 
 XML::Easy - XML processing with a clean interface
 
+=head1 SYNOPSIS
+
+	use XML::Easy::NodeBasics qw(xml_element xml_e_attribute);
+	use XML::Easy::Text
+		qw(xml10_read_document xml10_write_document);
+
+	$element = xml_element("a", { href => "there" }, "there");
+	$element = xml10_read_document('<a href="there">there</a>');
+
+	$href = xml_e_attribute($element, "href");
+	$text = xml10_write_document($element);
+
+	# see specific modules for many more functions
+
 =head1 DESCRIPTION
 
 L<XML::Easy> is a collection of modules relating to the processing,
@@ -35,63 +49,69 @@ The modules in the L<XML::Easy> distribution are:
 
 =item L<XML::Easy>
 
-This document.  For historical reasons, this can also be loaded as a
-module, and some of the functions from L<XML::Easy::Text> can be imported
-from here.
+This document.  For historical reasons, this can also be loaded as
+a module, and (though it is deprecated) some of the functions from
+L<XML::Easy::Text> can be imported from here.
 
 =item L<XML::Easy::Classify>
 
 This module provides various type-testing functions, relating to data
 types used in the L<XML::Easy> ensemble.  These are mainly intended to be
 used to enforce validity of data being processed by XML-related functions.
-They do not generate exceptions themselves, but of course type enforcement
-code can be built using these predicates.
 
 =item L<XML::Easy::Content>
 
 =item L<XML::Easy::Element>
 
-These are classes used to represent XML data in an abstract form.
-Objects of these classes are completely isolated from the textual
-representation of XML, holding only the meaningful content of the data.
-This is a suitable form for application code to manipulate an XML
-representation of application data.
+These are classes used to represent XML data for general manipulation.
+Objects of these classes hold the meaningful content of the data,
+independent of textual representation.  The data in these nodes cannot
+be modified: different data requires new nodes.
 
 =item L<XML::Easy::NodeBasics>
 
-This module supplies functions concerned with the fundamental manipulation
-of XML data nodes (content chunks and elements).  The nodes are dumb
-data objects, best manipulated using plain functions such as the ones
-in this module.
+This module supplies functions concerned with the creation, examination,
+and other manipulation of XML data nodes (content chunks and elements).
+The nodes are dumb data objects, best manipulated using plain functions
+such as the ones in this module.
 
 =item L<XML::Easy::Syntax>
 
-This module supplies Perl regular expressions encompassing the grammar
-of XML 1.0, except for document type declarations and DTDs.  They can
-be used to construct an XML parser, but it is generally recommended
-to use a pre-existing parser (such as the one in L<XML::Easy::Text>)
-when doing ordinary XML processing.  This module is most useful when
-doing irregular things with XML.
+This module supplies Perl regular expressions describing the grammar of 
+XML 1.0.  This is intended to support doing irregular things with XML,
+rather than for normal parsing.
 
 =item L<XML::Easy::Text>
 
 This module supplies functions that parse and serialise XML data as text
-according to the XML 1.0 specification.  The functions are implemented
-in C for performance, with a pure Perl backup version (which has good
-performance compared to other pure Perl parsers) for systems that can't
-handle XS modules.
+according to the XML 1.0 specification.
 
 =back
 
 =head1 OTHER DISTRIBUTIONS
 
-The L<XML::Easy::ProceduralWriter> module provides a way to build up
-XML data nodes by procedural code.  Some programmers will find this more
-comfortable than the functional style.
+Other CPAN distributions that work with L<XML::Easy> are:
 
-The C<XML::Easy::Transform::> namespace exists to contain modules that
-perform transformations on XML documents, or parts thereof, in the form
-of L<XML::Easy::Element> and L<XML::Easy::Content> nodes.
+=over
+
+=item L<Test::XML::Easy>
+
+A testing tool, providing L<Test::More>-style functions that check
+whether XML nodes are as expected.
+
+=item L<XML::Easy::ProceduralWriter>
+
+Provides a way to construct XML data nodes by procedural code.
+Some programmers will find this more comfortable than the functional
+style offered by L<XML::Easy::NodeBasics>.
+
+=item C<XML::Easy::Transform::>
+
+This namespace exists to contain modules that perform transformations
+on XML documents, or parts thereof, in the form of L<XML::Easy::Element>
+and L<XML::Easy::Content> nodes.
+
+=back
 
 =cut
 
@@ -100,7 +120,7 @@ package XML::Easy;
 use warnings;
 use strict;
 
-our $VERSION = "0.004";
+our $VERSION = "0.005";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(

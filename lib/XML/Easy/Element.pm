@@ -17,10 +17,11 @@ XML::Easy::Element - abstract form of XML element
 =head1 DESCRIPTION
 
 An object of this class represents an XML element, a node in the tree
-making up an XML document.  This is in an abstract form, completely
-isolated from the textual representation of XML, holding only the
-meaningful content of the element.  This is a suitable form for
-application code to manipulate an XML representation of application data.
+making up an XML document.  This is in an abstract form, intended
+for general manipulation.  It is completely isolated from the textual
+representation of XML, and holds only the meaningful content of the
+element.  The data in an element object cannot be modified: different
+data requires the creation of a new object.
 
 The properties of an XML element are of three kinds.  Firstly, the element
 has exactly one type, which is referred to by a name.  Secondly, the
@@ -37,10 +38,6 @@ almost all Unicode characters, with only a few characters (such as most
 of the ASCII control characters) prohibited by the specification from
 being directly represented in XML.
 
-An abstract element object cannot be modified.  Once created, its
-properties are fixed.  Tasks that you might think of as "modifying an
-XML node" actually involve creating a new node.
-
 This class is not meant to be subclassed.  XML elements are unextendable,
 dumb data.  Element objects are better processed using the functions in
 L<XML::Easy::NodeBasics> than using the methods of this class.
@@ -54,7 +51,7 @@ use strict;
 
 use XML::Easy::Content 0.001 ();
 
-our $VERSION = "0.004";
+our $VERSION = "0.005";
 
 eval { local $SIG{__DIE__};
 	require XSLoader;
@@ -66,7 +63,7 @@ if($@ eq "") {
 } else {
 	(my $filename = __FILE__) =~ tr# -~##cd;
 	local $/ = undef;
-	my $pp_code = "#line 81 \"$filename\"\n".<DATA>;
+	my $pp_code = "#line 83 \"$filename\"\n".<DATA>;
 	close(DATA);
 	{
 		local $SIG{__DIE__};
@@ -74,6 +71,8 @@ if($@ eq "") {
 	}
 	die $@ if $@ ne "";
 }
+
+*content = \&content_twine;
 
 1;
 
@@ -83,8 +82,9 @@ __DATA__
 # for the eval.  Explicit package declaration here fixes it.
 package XML::Easy::Element;
 
-use Params::Classify 0.000 qw(is_string is_ref is_strictly_blessed);
-use XML::Easy::Syntax 0.000 qw($xml10_char_rx $xml10_name_rx);
+use Params::Classify 0.000 qw(is_string is_ref);
+use XML::Easy::Classify qw(check_xml_attributes check_xml_content_object);
+use XML::Easy::Syntax 0.000 qw($xml10_name_rx);
 
 BEGIN {
 	if(eval { local $SIG{__DIE__};
@@ -112,8 +112,9 @@ Constructs and returns a new element object with the specified properties.
 I<TYPE_NAME> must be a string.  I<ATTRIBUTES> must be a reference
 to a hash in the same form that is returned by the accessor method
 C<attributes> (below).  I<CONTENT> must be a reference to either an
-L<XML::Easy::Content> object or an array of the type that can be passed
-to that class's C<new> constructor.  All are checked for validity, against
+L<XML::Easy::Content> object or a twine array
+(see L<XML::Easy::NodeBasics/Twine>).
+All are checked for validity, against
 the XML 1.0 specification, and the function C<die>s if any are invalid.
 
 =cut
@@ -132,19 +133,12 @@ sub new {
 	$attrs = { %$attrs };
 	_set_readonly(\$_) foreach values %$attrs;
 	_set_readonly($attrs);
-	foreach(sort keys %$attrs) {
-		no warnings "utf8";
-		_throw_data_error("illegal attribute name")
-			unless /\A$xml10_name_rx\z/o;
-		_throw_data_error("character data isn't a string")
-			unless is_string($attrs->{$_});
-		_throw_data_error("character data contains illegal character")
-			unless $attrs->{$_} =~ /\A$xml10_char_rx*\z/o;
+	check_xml_attributes($attrs);
+	if(is_ref($content, "ARRAY")) {
+		$content = XML::Easy::Content->new($content);
+	} else {
+		check_xml_content_object($content);
 	}
-	$content = XML::Easy::Content->new($content)
-		if is_ref($content, "ARRAY");
-	_throw_data_error("content data isn't a content chunk")
-		unless is_strictly_blessed($content, "XML::Easy::Content");
 	my $self = bless([ $type_name, $attrs, $content ], __PACKAGE__);
 	_set_readonly(\$_) foreach @$self;
 	_set_readonly($self);
@@ -170,6 +164,11 @@ sub type_name { $_[0]->[0] }
 Returns a reference to a hash encapsulating the element's attributes.
 In the hash, each key is an attribute name, and the corresponding value
 is the attribute's value as a string.
+
+The returned hash must not be subsequently modified.  If possible, it
+will be marked as read-only in order to prevent modification.  As a side
+effect, the read-only-ness may make lookup of any non-existent attribute
+generate an exception rather than returning C<undef>.
 
 =cut
 
@@ -204,20 +203,25 @@ the element's content.
 
 sub content_object { $_[0]->[2] }
 
-=item $element->content
+=item $element->content_twine
 
-Returns a reference to an array listing the element's content in
-the canonical form that is returned by the C<content> accessor of
-L<XML::Easy::Content>.
+Returns a reference to a twine array (see L<XML::Easy::NodeBasics/Twine>)
+listing the element's content.
+
+The returned array must not be subsequently modified.  If possible,
+it will be marked as read-only in order to prevent modification.
 
 =cut
 
-sub content {
+sub content_twine {
 	my $content = $_[0]->[2];
-	_throw_data_error("content data isn't a content chunk")
-		unless is_strictly_blessed($content, "XML::Easy::Content");
-	return $content->content;
+	check_xml_content_object($content);
+	return $content->twine;
 }
+
+=item $element->content
+
+Deprecated alias for the L</content_twine> method.
 
 =back
 

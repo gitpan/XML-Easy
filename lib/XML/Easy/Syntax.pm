@@ -10,13 +10,12 @@ XML::Easy::Syntax - excruciatingly correct XML syntax
 
 =head1 DESCRIPTION
 
-This module supplies Perl regular expressions encompassing the grammar
-of XML 1.0, except for document type declarations and DTDs.  They can
-be used to construct an XML parser, but it is generally recommended
-to use a pre-existing parser (such as the one in L<XML::Easy::Text>)
-when doing ordinary XML processing.  This module is most useful when
-doing irregular things with XML.
+This module supplies Perl regular expressions describing the grammar of
+XML 1.0.  This is intended to support doing irregular things with XML,
+rather than for normal parsing.
 
+These regular expressions encompass the entire XML grammar except for
+document type declarations and DTDs.
 This document assumes general familiarity with XML.
 
 =cut
@@ -45,7 +44,7 @@ our @EXPORT_OK = qw(
 	$xml10_prolog_xdtd_rx $xml10_document_xdtd_rx $xml10_extparsedent_rx
 );
 
-our $VERSION = "0.004";
+our $VERSION = "0.005";
 
 sub _charclass_regexp($) {
 	my($class) = @_;

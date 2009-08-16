@@ -8,7 +8,7 @@ static HV *stash_content, *stash_element;
 
 /* stashed constant content */
 
-static SV *empty_content_object;
+static SV *empty_contentobject;
 
 /* parameter classification */
 
@@ -787,27 +787,27 @@ static int char_is_char(U8 *p)
  * XML node handling
  */
 
-static SV *contentobject_contentarray(SV *cobj)
+static SV *contentobject_twine(SV *cobj)
 {
-	AV *carr;
+	AV *twine;
 	SV **item_ptr;
 	if(!SvROK(cobj))
 		throw_data_error("content data isn't a content chunk");
-	carr = (AV*)SvRV(cobj);
-	if(SvTYPE((SV*)carr) != SVt_PVAV || av_len(carr) != 0)
+	twine = (AV*)SvRV(cobj);
+	if(SvTYPE((SV*)twine) != SVt_PVAV || av_len(twine) != 0)
 		throw_data_error("content data isn't a content chunk");
-	if(SvSTASH((SV*)carr) != stash_content)
+	if(SvSTASH((SV*)twine) != stash_content)
 		throw_data_error("content data isn't a content chunk");
-	item_ptr = av_fetch(carr, 0, 0);
+	item_ptr = av_fetch(twine, 0, 0);
 	if(!item_ptr) throw_data_error("content array isn't an array");
 	return *item_ptr;
 }
 
-static SV *contentarray_contentobject(SV *caref)
+static SV *twine_contentobject(SV *tref)
 {
 	AV *content = newAV();
 	SV *cref = sv_2mortal(newRV_noinc((SV*)content));
-	av_push(content, SvREFCNT_inc(caref));
+	av_push(content, SvREFCNT_inc(tref));
 	sv_bless(cref, stash_content);
 	SvREADONLY_on((SV*)content);
 	SvREADONLY_on(cref);
@@ -849,33 +849,33 @@ static SV *userchardata_chardata(SV *idata)
 	return odata;
 }
 
-static SV *usercontentarray_contentarray(SV *icaref)
+static SV *usertwine_twine(SV *itref)
 {
-	SV *ocaref;
-	AV *icarr, *ocarr;
+	SV *otref;
+	AV *itwine, *otwine;
 	I32 clen, i;
-	if(!SvROK(icaref)) throw_data_error("content array isn't an array");
-	icarr = (AV*)SvRV(icaref);
-	if(SvTYPE((SV*)icarr) != SVt_PVAV || SvOBJECT((SV*)icarr))
+	if(!SvROK(itref)) throw_data_error("content array isn't an array");
+	itwine = (AV*)SvRV(itref);
+	if(SvTYPE((SV*)itwine) != SVt_PVAV || SvOBJECT((SV*)itwine))
 		throw_data_error("content array isn't an array");
-	clen = av_len(icarr);
+	clen = av_len(itwine);
 	if(clen & 1) throw_data_error("content array has even length");
-	ocarr = newAV();
-	ocaref = sv_2mortal(newRV_noinc((SV*)ocarr));
-	SvREADONLY_on(ocaref);
-	av_extend(ocarr, clen);
+	otwine = newAV();
+	otref = sv_2mortal(newRV_noinc((SV*)otwine));
+	SvREADONLY_on(otref);
+	av_extend(otwine, clen);
 	for(i = 0; ; i++) {
 		SV **item_ptr, *iitem, *oitem, *elem;
-		item_ptr = av_fetch(icarr, i, 0);
+		item_ptr = av_fetch(itwine, i, 0);
 		if(!item_ptr)
 			throw_data_error("character data isn't a string");
 		iitem = *item_ptr;
 		if(!sv_is_string(iitem))
 			throw_data_error("character data isn't a string");
 		oitem = userchardata_chardata(iitem);
-		av_push(ocarr, SvREFCNT_inc(oitem));
+		av_push(otwine, SvREFCNT_inc(oitem));
 		if(i++ == clen) break;
-		item_ptr = av_fetch(icarr, i, 0);
+		item_ptr = av_fetch(itwine, i, 0);
 		if(!item_ptr)
 			throw_data_error("element data isn't an element");
 		iitem = *item_ptr;
@@ -886,10 +886,10 @@ static SV *usercontentarray_contentarray(SV *icaref)
 			throw_data_error("element data isn't an element");
 		oitem = newRV_inc(elem);
 		SvREADONLY_on(oitem);
-		av_push(ocarr, SvREFCNT_inc(oitem));
+		av_push(otwine, SvREFCNT_inc(oitem));
 	}
-	SvREADONLY_on((SV*)ocarr);
-	return ocaref;
+	SvREADONLY_on((SV*)otwine);
+	return otref;
 }
 
 /*
@@ -915,7 +915,7 @@ static SV *usercontentarray_contentarray(SV *icaref)
  * functions won't match their grammar production in absolutely any context.
  * They are specialised to work in the context of the complete XML grammar,
  * and are permitted to detect XML syntax errors that strictly fall outside
- * the construct being parsed.  For example, parse_content_object() will
+ * the construct being parsed.  For example, parse_contentobject() will
  * complain if it faces "]]>", rather than matching "]]" and then returning.
  *
  * All objects created by parsing are initially mortal, and have their
@@ -1149,7 +1149,7 @@ static U8 *parse_pi(U8 *p)
 	return p + 2;
 }
 
-/* parse_content_array(): parses content, guarantees to return only when
+/* parse_twine(): parses content, guarantees to return only when
    facing the correct terminator ("</" or NUL); updates pointer in place,
    returns reference to AV which alternates character data and element
    objects */
@@ -1160,15 +1160,15 @@ static U8 *parse_pi(U8 *p)
 
 static SV *parse_element(U8 **pp);
 
-static SV *parse_content_array(U8 **pp, U32 chardata_flags)
+static SV *parse_twine(U8 **pp, U32 chardata_flags)
 {
 	U8 *p = *pp;
 	SV *chardata = newSVpvn("", 0);
-	AV *content_array = newAV();
-	SV *caref = sv_2mortal(newRV_noinc((SV*)content_array));
+	AV *twine = newAV();
+	SV *tref = sv_2mortal(newRV_noinc((SV*)twine));
 	SvUTF8_on(chardata);
-	av_push(content_array, chardata);
-	SvREADONLY_on(caref);
+	av_push(twine, chardata);
+	SvREADONLY_on(tref);
 	while(1) {
 		U8 c = *p;
 		if(c != '<') {
@@ -1193,29 +1193,27 @@ static SV *parse_content_array(U8 **pp, U32 chardata_flags)
 			p = parse_pi(p);
 		} else {
 			SvREADONLY_on(chardata);
-			av_push(content_array,
-				SvREFCNT_inc(parse_element(&p)));
+			av_push(twine, SvREFCNT_inc(parse_element(&p)));
 			chardata = newSVpvn("", 0);
 			SvUTF8_on(chardata);
-			av_push(content_array, chardata);
+			av_push(twine, chardata);
 		}
 	}
 	*pp = p;
 	SvREADONLY_on(chardata);
-	SvREADONLY_on((SV*)content_array);
-	return caref;
+	SvREADONLY_on((SV*)twine);
+	return tref;
 }
 
-/* parse_content_object(): parses content, guarantees to return only when
+/* parse_contentobject(): parses content, guarantees to return only when
    facing the correct terminator ("</" or NUL); updates pointer in place,
    returns reference to AV blessed into XML::Easy::Content (sole element
    is a reference to an AV which alternates character data and element
    objects) */
 
-static SV *parse_content_object(U8 **pp, U32 chardata_flags)
+static SV *parse_contentobject(U8 **pp, U32 chardata_flags)
 {
-	return contentarray_contentobject(
-		parse_content_array(pp, chardata_flags));
+	return twine_contentobject(parse_twine(pp, chardata_flags));
 }
 
 /* parse_element(): updates pointer in place, returns reference to AV blessed
@@ -1277,12 +1275,12 @@ static SV *parse_element(U8 **pp)
 	SvREADONLY_on((SV*)attrs);
 	if(c == '/') {
 		if(*++p != '>') throw_syntax_error(p);
-		av_push(element, SvREFCNT_inc(empty_content_object));
+		av_push(element, SvREFCNT_inc(empty_contentobject));
 	} else {
 		p++;
 		av_push(element,
 			SvREFCNT_inc(
-				parse_content_object(&p, CONTENT_INSIDE)));
+				parse_contentobject(&p, CONTENT_INSIDE)));
 		p += 2;
 		namelen = parse_name(p);
 		if(namelen != typename_len ||
@@ -1473,58 +1471,58 @@ static void serialise_chardata(SV *out, SV *data)
 
 static void serialise_element(SV *out, SV *elem);
 
-static void serialise_content_array(SV *out, SV *caref)
+static void serialise_twine(SV *out, SV *tref)
 {
-	AV *carr;
+	AV *twine;
 	I32 clen, i;
 	SV **item_ptr;
-	if(!SvROK(caref)) throw_data_error("content array isn't an array");
-	carr = (AV*)SvRV(caref);
-	if(SvTYPE((SV*)carr) != SVt_PVAV || SvOBJECT((SV*)carr))
+	if(!SvROK(tref)) throw_data_error("content array isn't an array");
+	twine = (AV*)SvRV(tref);
+	if(SvTYPE((SV*)twine) != SVt_PVAV || SvOBJECT((SV*)twine))
 		throw_data_error("content array isn't an array");
-	clen = av_len(carr);
+	clen = av_len(twine);
 	if(clen & 1) throw_data_error("content array has even length");
-	item_ptr = av_fetch(carr, 0, 0);
+	item_ptr = av_fetch(twine, 0, 0);
 	if(!item_ptr) throw_data_error("character data isn't a string");
 	serialise_chardata(out, *item_ptr);
 	for(i = 0; i != clen; ) {
-		item_ptr = av_fetch(carr, ++i, 0);
+		item_ptr = av_fetch(twine, ++i, 0);
 		if(!item_ptr)
 			throw_data_error("element data isn't an element");
 		serialise_element(out, *item_ptr);
-		item_ptr = av_fetch(carr, ++i, 0);
+		item_ptr = av_fetch(twine, ++i, 0);
 		if(!item_ptr)
 			throw_data_error("character data isn't a string");
 		serialise_chardata(out, *item_ptr);
 	}
 }
 
-static void serialise_content_object(SV *out, SV *cref)
+static void serialise_contentobject(SV *out, SV *cref)
 {
-	serialise_content_array(out, contentobject_contentarray(cref));
+	serialise_twine(out, contentobject_twine(cref));
 }
 
-static void serialise_content_eitherway(SV *out, SV *cref)
+static void serialise_eithercontent(SV *out, SV *cref)
 {
 	SV *tgt;
 	if(SvROK(cref) && (tgt = SvRV(cref), SvTYPE(tgt) == SVt_PVAV) &&
 			!SvOBJECT(tgt)) {
-		serialise_content_array(out, cref);
+		serialise_twine(out, cref);
 	} else {
-		serialise_content_object(out, cref);
+		serialise_contentobject(out, cref);
 	}
 }
 
-static int content_array_is_empty(SV *cref)
+static int twine_is_empty(SV *tref)
 {
-	AV *carr;
+	AV *twine;
 	SV **item_ptr;
 	SV *item;
-	if(!SvROK(cref)) return 0;
-	carr = (AV*)SvRV(cref);
-	if(SvTYPE((SV*)carr) != SVt_PVAV || SvOBJECT((SV*)carr)) return 0;
-	if(av_len(carr) != 0) return 0;
-	item_ptr = av_fetch(carr, 0, 0);
+	if(!SvROK(tref)) return 0;
+	twine = (AV*)SvRV(tref);
+	if(SvTYPE((SV*)twine) != SVt_PVAV || SvOBJECT((SV*)twine)) return 0;
+	if(av_len(twine) != 0) return 0;
+	item_ptr = av_fetch(twine, 0, 0);
 	if(!item_ptr) return 0;
 	item = *item_ptr;
 	if(!SvOK(item) || SvROK(item)) return 0;
@@ -1533,15 +1531,15 @@ static int content_array_is_empty(SV *cref)
 
 static int content_is_empty(SV *cref)
 {
-	AV *carr;
+	AV *twine;
 	SV **item_ptr;
 	if(!SvROK(cref)) return 0;
-	carr = (AV*)SvRV(cref);
-	if(SvTYPE((SV*)carr) != SVt_PVAV || av_len(carr) != 0) return 0;
-	if(SvSTASH((SV*)carr) != stash_content) return 0;
-	item_ptr = av_fetch(carr, 0, 0);
+	twine = (AV*)SvRV(cref);
+	if(SvTYPE((SV*)twine) != SVt_PVAV || av_len(twine) != 0) return 0;
+	if(SvSTASH((SV*)twine) != stash_content) return 0;
+	item_ptr = av_fetch(twine, 0, 0);
 	if(!item_ptr) return 0;
-	return content_array_is_empty(*item_ptr);
+	return twine_is_empty(*item_ptr);
 }
 
 static void serialise_attvalue(SV *out, SV *data)
@@ -1659,7 +1657,7 @@ static void serialise_element(SV *out, SV *eref)
 		sv_catpvn_nomg(out, "/>", 2);
 	} else {
 		sv_catpvn_nomg(out, ">", 1);
-		serialise_content_object(out, content);
+		serialise_contentobject(out, content);
 		sv_catpvn_nomg(out, "</", 2);
 		sv_catpvn_nomg(out, (char*)typename_start, typename_len);
 		sv_catpvn_nomg(out, ">", 1);
@@ -1675,39 +1673,38 @@ BOOT:
 	/* stash shared empty-content object */
 	{
 		SV *chardata;
-		AV *content_array;
-		SV *caref;
+		AV *twine;
+		SV *tref;
 		AV *content;
 		SV *cref;
 		chardata = newSVpvn("", 0);
 		SvREADONLY_on(chardata);
-		content_array = newAV();
-		av_push(content_array, chardata);
-		SvREADONLY_on((SV*)content_array);
-		caref = newRV_noinc((SV*)content_array);
-		SvREADONLY_on(caref);
+		twine = newAV();
+		av_push(twine, chardata);
+		SvREADONLY_on((SV*)twine);
+		tref = newRV_noinc((SV*)twine);
+		SvREADONLY_on(tref);
 		content = newAV();
-		av_push(content, caref);
+		av_push(content, tref);
 		cref = newRV_noinc((SV*)content);
 		sv_bless(cref, stash_content);
 		SvREADONLY_on((SV*)content);
 		SvREADONLY_on(cref);
-		empty_content_object = cref;
+		empty_contentobject = cref;
 	}
 
 SV *
-new(SV *class, SV *caref)
+new(SV *class, SV *tref)
 CODE:
-	RETVAL = contentarray_contentobject(
-			usercontentarray_contentarray(caref));
+	RETVAL = twine_contentobject(usertwine_twine(tref));
 	SvREFCNT_inc(RETVAL);
 OUTPUT:
 	RETVAL
 
 SV *
-content(SV *cref)
+twine(SV *cref)
 CODE:
-	RETVAL = contentobject_contentarray(cref);
+	RETVAL = contentobject_twine(cref);
 	SvREFCNT_inc(RETVAL);
 OUTPUT:
 	RETVAL
@@ -1786,8 +1783,7 @@ CODE:
 		throw_data_error("content data isn't a content chunk");
 	tgt = SvRV(content);
 	if(!SvOBJECT(tgt) && SvTYPE(tgt) == SVt_PVAV) {
-		content = contentarray_contentobject(
-				usercontentarray_contentarray(content));
+		content = twine_contentobject(usertwine_twine(content));
 	} else if(SvSTASH(tgt) == stash_content) {
 		content = sv_2mortal(newRV_inc(tgt));
 		SvREADONLY_on(content);
@@ -1878,7 +1874,7 @@ OUTPUT:
 	RETVAL
 
 SV *
-content(SV *eref)
+content_twine(SV *eref)
 PREINIT:
 	AV *earr;
 	SV **item_ptr;
@@ -1886,7 +1882,7 @@ CODE:
 	earr = element_nodearray(eref);
 	item_ptr = av_fetch(earr, 2, 0);
 	if(!item_ptr) throw_data_error("content data isn't a content chunk");
-	RETVAL = contentobject_contentarray(*item_ptr);
+	RETVAL = contentobject_twine(*item_ptr);
 	SvREFCNT_inc(RETVAL);
 OUTPUT:
 	RETVAL
@@ -1904,14 +1900,14 @@ CODE:
 	text_sv = upgrade_sv(text_sv);
 	p = (U8*)SvPV(text_sv, text_len);
 	end = p + text_len;
-	RETVAL = parse_content_object(&p, CONTENT_TOPLEVEL);
+	RETVAL = parse_contentobject(&p, CONTENT_TOPLEVEL);
 	if(p != end) throw_syntax_error(p);
 	SvREFCNT_inc(RETVAL);
 OUTPUT:
 	RETVAL
 
 SV *
-xml10_read_content(SV *text_sv)
+xml10_read_content_twine(SV *text_sv)
 PROTOTYPE: $
 PREINIT:
 	STRLEN text_len;
@@ -1921,7 +1917,7 @@ CODE:
 	text_sv = upgrade_sv(text_sv);
 	p = (U8*)SvPV(text_sv, text_len);
 	end = p + text_len;
-	RETVAL = parse_content_array(&p, CONTENT_TOPLEVEL);
+	RETVAL = parse_twine(&p, CONTENT_TOPLEVEL);
 	if(p != end) throw_syntax_error(p);
 	SvREFCNT_inc(RETVAL);
 OUTPUT:
@@ -1979,14 +1975,14 @@ CODE:
 	end = p + text_len;
 	p = parse_opt_xmldecl(p, XMLDECL_VERSION|XMLDECL_ENCODING,
 		XMLDECL_ENCODING);
-	RETVAL = parse_content_object(&p, CONTENT_TOPLEVEL);
+	RETVAL = parse_contentobject(&p, CONTENT_TOPLEVEL);
 	if(p != end) throw_syntax_error(p);
 	SvREFCNT_inc(RETVAL);
 OUTPUT:
 	RETVAL
 
 SV *
-xml10_read_extparsedent(SV *text_sv)
+xml10_read_extparsedent_twine(SV *text_sv)
 PROTOTYPE: $
 PREINIT:
 	STRLEN text_len;
@@ -1998,7 +1994,7 @@ CODE:
 	end = p + text_len;
 	p = parse_opt_xmldecl(p, XMLDECL_VERSION|XMLDECL_ENCODING,
 		XMLDECL_ENCODING);
-	RETVAL = parse_content_array(&p, CONTENT_TOPLEVEL);
+	RETVAL = parse_twine(&p, CONTENT_TOPLEVEL);
 	if(p != end) throw_syntax_error(p);
 	SvREFCNT_inc(RETVAL);
 OUTPUT:
@@ -2010,7 +2006,7 @@ PROTOTYPE: $
 CODE:
 	RETVAL = sv_2mortal(newSVpvn("", 0));
 	SvUTF8_on(RETVAL);
-	serialise_content_eitherway(RETVAL, cont);
+	serialise_eithercontent(RETVAL, cont);
 	SvREFCNT_inc(RETVAL);
 OUTPUT:
 	RETVAL
@@ -2058,7 +2054,7 @@ CODE:
 		sv_catsv_nomg(RETVAL, enc);
 		sv_catpvn_nomg(RETVAL, "\"?>", 3);
 	}
-	serialise_content_eitherway(RETVAL, cont);
+	serialise_eithercontent(RETVAL, cont);
 	SvREFCNT_inc(RETVAL);
 OUTPUT:
 	RETVAL

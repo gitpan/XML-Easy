@@ -1,3 +1,29 @@
+version 0.005; 2009-08-16
+
+  * bugfix: in xml_content_object(), xml_content(), and xml_element(),
+    avoid clobbering function arguments (this occurred when passing a
+    content array as an argument)
+
+  * in XML::Easy::NodeBasics, add node equality comparison functions
+
+  * introduce the term "twine" for content
+    arrays, and corresponding methods and functions
+    (XML::Easy::Content->twine, XML::Easy::Element->content_twine,
+    XML::Easy::Classify::is_xml_content_twine,
+    XML::Easy::Text::xml10_read_{content,extparsedent}_twine,
+    XML::Easy::NodeBasics::xml{,_c,_e}_content_twine)
+
+  * in XML::Easy::Classify, add "check_" functions for argument checking
+
+  * in XML::Easy::NodeBasics, add short names for all functions
+
+  * tweak introductory documentation to improve comprehension
+
+  * in documentation, note that returned twine arrays and attribute
+    hashes must not be modified
+
+  * list Test::XML::Easy in documentation's list of other distributions
+
 version 0.004; 2009-05-20
 
   * bugfix: correct character classification code that was incorrectly
@@ -40,7 +66,7 @@ version 0.002; 2009-03-07
   * add casts for pointer target signedness, and other small changes to
     the C code, to avoid compiler warnings
 
-  * in XML::Eay::Syntax documentation, note the possibility of pre-5.10
+  * in XML::Easy::Syntax documentation, note the possibility of pre-5.10
     perls overflowing the stack when executing regexps
 
 version 0.001; 2009-03-03

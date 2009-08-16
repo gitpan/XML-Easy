@@ -9,15 +9,15 @@ use t::ErrorCases qw(COUNT_error_text test_error_text);
 
 use utf8 ();
 
-use Test::More tests => 1 + 2*504 + 2 + COUNT_error_text*6;
+use Test::More tests => 1 + 2*504 + 2 + COUNT_error_text*6 + 5;
 
 BEGIN { $SIG{__WARN__} = sub { die "WARNING: $_[0]" }; }
 
 BEGIN { use_ok "XML::Easy::Text", qw(
-		xml10_read_content_object xml10_read_content
+		xml10_read_content_object xml10_read_content_twine
 		xml10_read_element
 		xml10_read_document
-		xml10_read_extparsedent_object xml10_read_extparsedent
+		xml10_read_extparsedent_object xml10_read_extparsedent_twine
 ); }
 
 sub deep_match($$);
@@ -121,19 +121,26 @@ while(1) {
 }
 
 is_deeply
-	xml10_read_content_object("foo<q>bar</q>baz")->content,
-	xml10_read_content("foo<q>bar</q>baz");
+	xml10_read_content_object("foo<q>bar</q>baz")->twine,
+	xml10_read_content_twine("foo<q>bar</q>baz");
 
 is_deeply
-	xml10_read_extparsedent_object("foo<q>bar</q>baz")->content,
-	xml10_read_extparsedent("foo<q>bar</q>baz");
+	xml10_read_extparsedent_object("foo<q>bar</q>baz")->twine,
+	xml10_read_extparsedent_twine("foo<q>bar</q>baz");
 
 foreach my $func (
 	(values %reader),
-	\&xml10_read_content_object,
-	\&xml10_read_extparsedent_object
+	\&xml10_read_content_twine,
+	\&xml10_read_extparsedent_twine,
 ) {
 	test_error_text($func);
 }
+
+ok defined(&{"XML::Easy::Text::xml10_read_content"});
+ok \&{"XML::Easy::Text::xml10_read_content"} == \&{"XML::Easy::Text::xml10_read_content_twine"};
+ok defined(&{"XML::Easy::Text::xml10_read_extparsedent"});
+ok \&{"XML::Easy::Text::xml10_read_extparsedent"} == \&{"XML::Easy::Text::xml10_read_extparsedent_twine"};
+use_ok "XML::Easy::Text", qw(xml10_read_content xml10_read_extparsedent);
+
 
 1;

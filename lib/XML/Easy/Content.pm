@@ -12,16 +12,16 @@ XML::Easy::Content - abstract form of XML content
 		"bar",
 	]);
 
-	$content = $content->content;
+	$twine = $content->twine;
 
 =head1 DESCRIPTION
 
 An object of this class represents a chunk of XML content, the kind
-of matter that can be contained within an XML element.  This is in
-an abstract form, completely isolated from the textual representation
-of XML, holding only the meaningful content of the chunk.  This is a
-suitable form for application code to manipulate an XML representation
-of application data.
+of matter that can be contained within an XML element.  This is in an
+abstract form, intended for general manipulation.  It is completely
+isolated from the textual representation of XML, and holds only the
+meaningful content of the chunk.  The data in a content object cannot
+be modified: different data requires the creation of a new object.
 
 An XML content chunk consists of a sequence of zero or more characters
 and XML elements, interspersed in any fashion.  Character content can
@@ -30,10 +30,6 @@ most of the ASCII control characters) prohibited by the specification
 from being directly represented in XML.  Each XML element in a content
 chunk itself recursively contains a chunk of content, in addition to
 having attached metadata.
-
-An abstract content chunk object cannot be modified.  Once created,
-its properties are fixed.  Tasks that you might think of as "modifying
-an XML node" actually involve creating a new node.
 
 This class is not meant to be subclassed.  XML content is unextendable,
 dumb data.  Content objects are better processed using the functions in
@@ -46,7 +42,7 @@ package XML::Easy::Content;
 use warnings;
 use strict;
 
-our $VERSION = "0.004";
+our $VERSION = "0.005";
 
 eval { local $SIG{__DIE__};
 	require XSLoader;
@@ -58,7 +54,7 @@ if($@ eq "") {
 } else {
 	(my $filename = __FILE__) =~ tr# -~##cd;
 	local $/ = undef;
-	my $pp_code = "#line 73 \"$filename\"\n".<DATA>;
+	my $pp_code = "#line 75 \"$filename\"\n".<DATA>;
 	close(DATA);
 	{
 		local $SIG{__DIE__};
@@ -66,6 +62,8 @@ if($@ eq "") {
 	}
 	die $@ if $@ ne "";
 }
+
+*content = \&twine;
 
 1;
 
@@ -75,8 +73,8 @@ __DATA__
 # for the eval.  Explicit package declaration here fixes it.
 package XML::Easy::Content;
 
-use Params::Classify 0.000 qw(is_string is_ref is_strictly_blessed);
-use XML::Easy::Syntax 0.000 qw($xml10_char_rx);
+use Params::Classify 0.000 qw(is_ref);
+use XML::Easy::Classify qw(check_xml_content_twine);
 
 BEGIN {
 	if(eval { local $SIG{__DIE__};
@@ -98,48 +96,26 @@ sub _throw_data_error($) {
 
 =over
 
-=item XML::Easy::Content->new(CONTENT_ARRAY)
+=item XML::Easy::Content->new(TWINE)
 
 Constructs and returns a new content chunk object with the specified
-content.  The content is checked for validity, against the XML 1.0
+content.
+I<TWINE> must be a reference to an array listing the chunk's
+content in twine form (see L<XML::Easy::NodeBasics/Twine>).
+The content is checked for validity, against the XML 1.0
 specification, and the function C<die>s if it is invalid.
-
-I<CONTENT_ARRAY> must be a reference to an array listing the chunk's
-content in a canonical form.  The array must have an odd number of
-members.  The first and last members, and all members in between with an
-even index, must be strings, and give the chunk's character data.  Each
-member with an odd index must be a reference to an L<XML::Easy::Element>
-object, representing an XML element contained directly within the chunk.
-Any of the strings may be empty, if the chunk has no character data
-between subelements or at the start or end of the chunk.
 
 =cut
 
 sub new {
-	my($class, $content_array) = @_;
+	my($class, $twine) = @_;
 	_throw_data_error("content array isn't an array")
-		unless is_ref($content_array, "ARRAY");
-	$content_array = [ @$content_array ];
-	_set_readonly(\$_) foreach @$content_array;
-	_set_readonly($content_array);
-	_throw_data_error("content array has even length")
-		unless @$content_array % 2 == 1;
-	for(my $i = 0; ; $i++) {
-		_throw_data_error("character data isn't a string")
-			unless is_string($content_array->[$i]);
-		{
-			no warnings "utf8";
-			_throw_data_error(
-				"character data contains illegal character")
-					unless $content_array->[$i] =~
-						/\A$xml10_char_rx*\z/o;
-		}
-		last if ++$i == @$content_array;
-		_throw_data_error("element data isn't an element")
-			unless is_strictly_blessed($content_array->[$i],
-						   "XML::Easy::Element");
-	}
-	my $self = bless([ $content_array ], __PACKAGE__);
+		unless is_ref($twine, "ARRAY");
+	$twine = [ @$twine ];
+	_set_readonly(\$_) foreach @$twine;
+	_set_readonly($twine);
+	check_xml_content_twine($twine);
+	my $self = bless([ $twine ], __PACKAGE__);
 	_set_readonly(\$_) foreach @$self;
 	_set_readonly($self);
 	return $self;
@@ -151,20 +127,21 @@ sub new {
 
 =over
 
-=item $content->content
+=item $content->twine
 
-Returns a reference to an array listing the chunk's content in a
-canonical form.  The array has an odd number of members.  The first and
-last members, and all members in between with an even index, are strings
-giving the chunk's character data.  Each member with an odd index is a
-reference to an L<XML::Easy::Element> object, representing an XML element
-contained directly within the chunk.  Any of the strings may be empty,
-if the chunk has no character data between subelements or at the start
-or end of the chunk.
+Returns a reference to an array listing the chunk's
+content in twine form (see L<XML::Easy::NodeBasics/Twine>).
+
+The returned array must not be subsequently modified.  If possible,
+it will be marked as read-only in order to prevent modification.
 
 =cut
 
-sub content { $_[0]->[0] }
+sub twine { $_[0]->[0] }
+
+=item $content->content
+
+Deprecated alias for the L</twine> method.
 
 =back
 
