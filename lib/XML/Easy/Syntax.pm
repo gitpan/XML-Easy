@@ -22,6 +22,7 @@ This document assumes general familiarity with XML.
 
 package XML::Easy::Syntax;
 
+{ use 5.008; }
 use warnings;
 use strict;
 
@@ -44,7 +45,7 @@ our @EXPORT_OK = qw(
 	$xml10_prolog_xdtd_rx $xml10_document_xdtd_rx $xml10_extparsedent_rx
 );
 
-our $VERSION = "0.005";
+our $VERSION = "0.006";
 
 sub _charclass_regexp($) {
 	my($class) = @_;
@@ -1161,7 +1162,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 Copyright (C) 2008, 2009 PhotoBox Ltd
 
-Copyright (C) 2009 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2009, 2010 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
 

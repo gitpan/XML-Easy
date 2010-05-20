@@ -2,6 +2,12 @@
 #include "perl.h"
 #include "XSUB.h"
 
+#define PERL_VERSION_DECIMAL(r,v,s) (r*1000000 + v*1000 + s)
+#define PERL_DECIMAL_VERSION \
+	PERL_VERSION_DECIMAL(PERL_REVISION,PERL_VERSION,PERL_SUBVERSION)
+#define PERL_VERSION_GE(r,v,s) \
+	(PERL_DECIMAL_VERSION >= PERL_VERSION_DECIMAL(r,v,s))
+
 /* stashed stashes */
 
 static HV *stash_content, *stash_element;
@@ -12,8 +18,16 @@ static SV *empty_contentobject;
 
 /* parameter classification */
 
+#define sv_is_glob(sv) (SvTYPE(sv) == SVt_PVGV)
+
+#if PERL_VERSION_GE(5,11,0)
+# define sv_is_regexp(sv) (SvTYPE(sv) == SVt_REGEXP)
+#else /* <5.11.0 */
+# define sv_is_regexp(sv) 0
+#endif /* <5.11.0 */
+
 #define sv_is_string(sv) \
-	(SvTYPE(sv) != SVt_PVGV && \
+	(!sv_is_glob(sv) && !sv_is_regexp(sv) && \
 	 (SvFLAGS(sv) & (SVf_IOK|SVf_NOK|SVf_POK|SVp_IOK|SVp_NOK|SVp_POK)))
 
 /* exceptions */
@@ -796,7 +810,7 @@ static SV *contentobject_twine(SV *cobj)
 	twine = (AV*)SvRV(cobj);
 	if(SvTYPE((SV*)twine) != SVt_PVAV || av_len(twine) != 0)
 		throw_data_error("content data isn't a content chunk");
-	if(SvSTASH((SV*)twine) != stash_content)
+	if(!SvOBJECT((SV*)twine) || SvSTASH((SV*)twine) != stash_content)
 		throw_data_error("content data isn't a content chunk");
 	item_ptr = av_fetch(twine, 0, 0);
 	if(!item_ptr) throw_data_error("content array isn't an array");
@@ -821,7 +835,7 @@ static AV *element_nodearray(SV *eref)
 	earr = (AV*)SvRV(eref);
 	if(SvTYPE((SV*)earr) != SVt_PVAV || av_len(earr) != 2)
 		throw_data_error("element data isn't an element");
-	if(SvSTASH((SV*)earr) != stash_element)
+	if(!SvOBJECT((SV*)earr) || SvSTASH((SV*)earr) != stash_element)
 		throw_data_error("element data isn't an element");
 	return earr;
 }
@@ -882,7 +896,7 @@ static SV *usertwine_twine(SV *itref)
 		if(!SvROK(iitem))
 			throw_data_error("element data isn't an element");
 		elem = SvRV(iitem);
-		if(SvSTASH(elem) != stash_element)
+		if(!SvOBJECT(elem) || SvSTASH(elem) != stash_element)
 			throw_data_error("element data isn't an element");
 		oitem = newRV_inc(elem);
 		SvREADONLY_on(oitem);
@@ -1536,7 +1550,8 @@ static int content_is_empty(SV *cref)
 	if(!SvROK(cref)) return 0;
 	twine = (AV*)SvRV(cref);
 	if(SvTYPE((SV*)twine) != SVt_PVAV || av_len(twine) != 0) return 0;
-	if(SvSTASH((SV*)twine) != stash_content) return 0;
+	if(!SvOBJECT((SV*)twine) || SvSTASH((SV*)twine) != stash_content)
+		return 0;
 	item_ptr = av_fetch(twine, 0, 0);
 	if(!item_ptr) return 0;
 	return twine_is_empty(*item_ptr);
@@ -1694,7 +1709,7 @@ BOOT:
 	}
 
 SV *
-new(SV *class, SV *tref)
+new(SV *classname, SV *tref)
 CODE:
 	RETVAL = twine_contentobject(usertwine_twine(tref));
 	SvREFCNT_inc(RETVAL);
@@ -1712,7 +1727,7 @@ OUTPUT:
 MODULE = XML::Easy PACKAGE = XML::Easy::Element
 
 SV *
-new(SV *class, SV *type_name, SV *attrs, SV *content)
+new(SV *classname, SV *type_name, SV *attrs, SV *content)
 PREINIT:
 	U8 *p;
 	STRLEN len;
@@ -1784,7 +1799,7 @@ CODE:
 	tgt = SvRV(content);
 	if(!SvOBJECT(tgt) && SvTYPE(tgt) == SVt_PVAV) {
 		content = twine_contentobject(usertwine_twine(content));
-	} else if(SvSTASH(tgt) == stash_content) {
+	} else if(SvOBJECT(tgt) && SvSTASH(tgt) == stash_content) {
 		content = sv_2mortal(newRV_inc(tgt));
 		SvREADONLY_on(content);
 	} else {

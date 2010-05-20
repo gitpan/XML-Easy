@@ -39,10 +39,11 @@ L<XML::Easy::NodeBasics> than using the methods of this class.
 
 package XML::Easy::Content;
 
+{ use 5.008; }
 use warnings;
 use strict;
 
-our $VERSION = "0.005";
+our $VERSION = "0.006";
 
 eval { local $SIG{__DIE__};
 	require XSLoader;
@@ -158,7 +159,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 Copyright (C) 2008, 2009 PhotoBox Ltd
 
-Copyright (C) 2009 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2009, 2010 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
 

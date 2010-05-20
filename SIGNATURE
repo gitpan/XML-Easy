@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.55.
+signed via the Module::Signature module, version 0.64.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -14,23 +14,23 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 c6ecf9058f98bdd57766cf64cc665f0eceb4a6c3 .cvsignore
-SHA1 e90dcf4fbe8fa0a562d2c97a3a4d173244d94cde Build.PL
-SHA1 b5c78d2e1dc0e11f1e6f98ff6dff861c0e82733e Changes
+SHA1 5f685263c3b44d758d845eb2feb0001e3bc67843 .cvsignore
+SHA1 dd273f72a019eca56459cbace161230981b1f154 Build.PL
+SHA1 1caff82adee054e8ba4326223869e3df735055d9 Changes
 SHA1 88e654475d2aed608ba2bdecee72ed1751bd40f0 MANIFEST
-SHA1 281860805c0bc1eaabd63f4d082655c4a5d64ed7 META.yml
-SHA1 2ee631405ce8597a9676b22fa640df3adf273015 Makefile.PL
-SHA1 7aa23cb7693b7e313a7dbbabfb67d3c6d34d77b2 README
+SHA1 1ca46cb3be4bf9fecbf7eb682d369a2896a2e698 META.yml
+SHA1 5a1ad8b879334163fd4d69505f3a13e70d1bb746 Makefile.PL
+SHA1 82414a78a69c77519487195f1e1f2a7d4410c992 README
 SHA1 2e7605f4c12931f9bc45b9449e8ed4a0f372a6c0 lib/XML/.cvsignore
-SHA1 2bbcc715b00c091c7de98152e23ea428b4008984 lib/XML/Easy.pm
-SHA1 1f0686a5a95114073857d7a887ef39b98507665f lib/XML/Easy.xs
-SHA1 7f80dcf1d69e247586f886216662122938e2ecbb lib/XML/Easy/Classify.pm
-SHA1 e5358f1ecb8a51101c3af3bd0d65b2d89921be05 lib/XML/Easy/Content.pm
-SHA1 de73aa127f993f3360638fc68991f917651f8101 lib/XML/Easy/Element.pm
-SHA1 e79501d768905994912eebf30ed5aebf52e344e6 lib/XML/Easy/NodeBasics.pm
-SHA1 eaafeeee51b6f2fff00c790c33a109b99fc80529 lib/XML/Easy/Syntax.pm
-SHA1 e2a4795f03acfe866f1a2026b73b02bc538980b4 lib/XML/Easy/Text.pm
-SHA1 bf7c417565d5703c3c5dcbba39cd7b95c230e27c lib/XML/Easy/Transform.pod
+SHA1 483ca70f58f624e119facb7f7fa6d259a512b693 lib/XML/Easy.pm
+SHA1 98f08e65fa4d4ec6442f3974a20c819fa1ccdf5b lib/XML/Easy.xs
+SHA1 d9bea272805cc3c4129ecb116fa4102ba92c5350 lib/XML/Easy/Classify.pm
+SHA1 fc38decee0ee004909cc4dd38407bcc4038f966c lib/XML/Easy/Content.pm
+SHA1 6e7ac44ac1209453c140a84d0a505f418683d17e lib/XML/Easy/Element.pm
+SHA1 798e1b9029e131f0c115371c3fc0fb2dda97af77 lib/XML/Easy/NodeBasics.pm
+SHA1 aa2a2aabc61fa7f3845e3e254a60f5ba7b8b1522 lib/XML/Easy/Syntax.pm
+SHA1 eeb6fe53b563c4a4df9deef10a1fb4594d71aff5 lib/XML/Easy/Text.pm
+SHA1 4472fb51a2ce6a5d0af6591aa497a800d344e251 lib/XML/Easy/Transform.pod
 SHA1 9c42bcfc141b86d95b6700ff7aa9809bc2afdf87 t/DataSets.pm
 SHA1 90b6aa23e026b0953e3d0a87edf2b1bf31599136 t/ErrorCases.pm
 SHA1 d7811e63cde3452c9e7e594fd1cbc824cead6712 t/classify.t
@@ -54,7 +54,7 @@ SHA1 4583c824a750986e01d992d4f8b92b58e70f122c t/write_pp.t
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1.4.9 (GNU/Linux)
 
-iEYEARECAAYFAkqH7aYACgkQOV9mt2VyAVHNhACfVLm4vakclyEX20bVYlin+Wwv
-XvgAoIqmxIgfZ/z9vfNmabeRFl0sKNd0
-=l/8S
+iEYEARECAAYFAkv1l70ACgkQOV9mt2VyAVHS5gCfcWdXJOFHi+jwSvHyN8KBuXbB
+Fl8An1orglOzJNXefzWV9vc5RlUEu7pC
+=e/Si
 -----END PGP SIGNATURE-----

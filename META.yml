@@ -1,21 +1,10 @@
 ---
-name: XML-Easy
-version: 0.005
+abstract: 'XML processing with a clean interface'
 author:
   - 'Andrew Main (Zefram) <zefram@fysh.org>'
-abstract: XML processing with a clean interface
-license: perl
-resources:
-  license: http://dev.perl.org/licenses/
-requires:
-  Exporter: 0
-  Params::Classify: 0
-  parent: 0
-  perl: 5.008
-  strict: 0
-  warnings: 0
 build_requires:
   Encode: 0
+  ExtUtils::CBuilder: 0
   IO::File: 0
   Module::Build: 0
   Params::Classify: 0
@@ -25,34 +14,49 @@ build_requires:
   strict: 0
   utf8: 0
   warnings: 0
-recommends:
-  Internals: 0
-  XSLoader: 0
+configure_requires:
+  Module::Build: 0
+  perl: 5.008
+distribution_type: module
 dynamic_config: 1
+generated_by: 'Module::Build version 0.3607'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: XML-Easy
 provides:
   XML::Easy:
     file: lib/XML/Easy.pm
-    version: 0.005
+    version: 0.006
   XML::Easy::Classify:
     file: lib/XML/Easy/Classify.pm
-    version: 0.005
+    version: 0.006
   XML::Easy::Content:
     file: lib/XML/Easy/Content.pm
-    version: 0.005
+    version: 0.006
   XML::Easy::Element:
     file: lib/XML/Easy/Element.pm
-    version: 0.005
+    version: 0.006
   XML::Easy::NodeBasics:
     file: lib/XML/Easy/NodeBasics.pm
-    version: 0.005
+    version: 0.006
   XML::Easy::Syntax:
     file: lib/XML/Easy/Syntax.pm
-    version: 0.005
+    version: 0.006
   XML::Easy::Text:
     file: lib/XML/Easy/Text.pm
-    version: 0.005
-generated_by: Module::Build version 0.31012
-meta-spec:
-  url: http://module-build.sourceforge.net/META-spec-v1.2.html
-  version: 1.2
-distribution_type: module
+    version: 0.006
+recommends:
+  Internals: 0
+  XSLoader: 0
+requires:
+  Exporter: 0
+  Params::Classify: 0
+  parent: 0
+  perl: 5.008
+  strict: 0
+  warnings: 0
+resources:
+  license: http://dev.perl.org/licenses/
+version: 0.006

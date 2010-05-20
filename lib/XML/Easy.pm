@@ -117,10 +117,11 @@ and L<XML::Easy::Content> nodes.
 
 package XML::Easy;
 
+{ use 5.008; }
 use warnings;
 use strict;
 
-our $VERSION = "0.005";
+our $VERSION = "0.006";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(
@@ -150,7 +151,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 Copyright (C) 2008, 2009 PhotoBox Ltd
 
-Copyright (C) 2009 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2009, 2010 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
 

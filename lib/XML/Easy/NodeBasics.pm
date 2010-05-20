@@ -80,6 +80,7 @@ it in encapsulated form as an L<XML::Easy::Content> object.
 
 package XML::Easy::NodeBasics;
 
+{ use 5.008; }
 use warnings;
 use strict;
 
@@ -103,7 +104,7 @@ BEGIN {
 	}
 }
 
-our $VERSION = "0.005";
+our $VERSION = "0.006";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(
@@ -542,6 +543,7 @@ sub xml_e_unequal($$) { !&xml_e_equal }
 L<XML::Easy::Classify>,
 L<XML::Easy::Content>,
 L<XML::Easy::Element>,
+L<XML::Easy::ProceduralWriter>,
 L<XML::Easy::Text>
 
 =head1 AUTHOR
@@ -550,7 +552,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2009 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2009, 2010 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
 

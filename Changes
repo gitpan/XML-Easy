@@ -1,3 +1,25 @@
+version 0.006; 2010-05-20
+
+  * bugfix: in XS, check SvOBJECT before looking at SvSTASH, because
+    the latter isn't guaranteed to be meaningful otherwise
+
+  * port to Perl 5.11, supporting new first-class regexp objects in
+    type checking
+
+  * check for required Perl version at runtime
+
+  * in XS, avoid using "class" as a variable name, for compatibility
+    with C++ compilers
+
+  * in Build.PL, explicitly declare configure-time requirements
+
+  * remove bogus "exit 0" from Build.PL
+
+  * in XML::Easy::NodeBasics documentation, reference
+    XML::Easy::ProceduralWriter
+
+  * add MYMETA.yml to .cvsignore
+
 version 0.005; 2009-08-16
 
   * bugfix: in xml_content_object(), xml_content(), and xml_element(),

@@ -51,6 +51,7 @@ of an expected type.  The functions come in matched pairs.
 
 package XML::Easy::Classify;
 
+{ use 5.008; }
 use warnings;
 use strict;
 
@@ -58,7 +59,7 @@ use Params::Classify 0.000 qw(is_string is_ref is_strictly_blessed);
 use XML::Easy::Syntax 0.000
 	qw($xml10_char_rx $xml10_name_rx $xml10_encname_rx);
 
-our $VERSION = "0.005";
+our $VERSION = "0.006";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(
@@ -305,7 +306,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2009 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2009, 2010 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
 

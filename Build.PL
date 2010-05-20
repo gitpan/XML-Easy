@@ -1,3 +1,4 @@
+{ use 5.006; }
 use warnings;
 use strict;
 
@@ -35,6 +36,13 @@ Module::Build->subclass(code => q{
 })->new(
 	module_name => "XML::Easy",
 	license => "perl",
+	configure_requires => {
+		"Module::Build" => 0,
+		"perl" => "5.008",
+	},
+	configure_recommends => {
+		"ExtUtils::CBuilder" => "0.15",
+	},
 	build_requires => {
 		"Encode" => 0,
 		"IO::File" => 0,
@@ -68,4 +76,4 @@ Module::Build->subclass(code => q{
 	sign => 1,
 )->create_build_script;
 
-exit 0;
+1;
