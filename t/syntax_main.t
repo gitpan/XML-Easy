@@ -41,7 +41,7 @@ my %recogniser = (
 # cause perl to crash.  All pre-5.10 perls have the iteration limit
 # bug, so there's no need to run the proper test on those verions.
 # 5.10 fixed the stack issue, so it's safe to run the proper test there.
-my $have_iterlimit_bug = $] < 5.010 || do {
+my $have_iterlimit_bug = "$]" < 5.010 || do {
 	local $SIG{__WARN__} = sub { };
 	("a"x40000) !~ /\A(?:X?[a-z])*\z/;
 };

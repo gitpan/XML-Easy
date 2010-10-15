@@ -1,3 +1,4 @@
+#define PERL_NO_GET_CONTEXT 1
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
@@ -7,6 +8,19 @@
 	PERL_VERSION_DECIMAL(PERL_REVISION,PERL_VERSION,PERL_SUBVERSION)
 #define PERL_VERSION_GE(r,v,s) \
 	(PERL_DECIMAL_VERSION >= PERL_VERSION_DECIMAL(r,v,s))
+
+#ifndef newSVpvs
+# define newSVpvs(string) newSVpvn(""string"", sizeof(string)-1)
+#endif /* !newSVpvs */
+
+#ifndef sv_catpvs_nomg
+# define sv_catpvs_nomg(sv, string) \
+	sv_catpvn_nomg(sv, ""string"", sizeof(string)-1)
+#endif /* !sv_catpvs_nomg */
+
+#ifndef gv_stashpvs
+# define gv_stashpvs(name, flags) gv_stashpvn(""name"", sizeof(name)-1, flags)
+#endif /* !gv_stashpvs */
 
 /* stashed stashes */
 
@@ -71,7 +85,8 @@ static SV *empty_contentobject;
  * mortal SV.
  */
 
-static U32 char_unicode(U8 *p)
+#define char_unicode(p) THX_char_unicode(aTHX_ p)
+static U32 THX_char_unicode(pTHX_ U8 *p)
 {
 	U32 val = *p;
 	U8 req_c1;
@@ -132,7 +147,8 @@ static U32 char_unicode(U8 *p)
 	return val;
 }
 
-static SV *upgrade_sv(SV *input)
+#define upgrade_sv(input) THX_upgrade_sv(aTHX_ input)
+static SV *THX_upgrade_sv(pTHX_ SV *input)
 {
 	U8 *p, *end;
 	STRLEN len;
@@ -148,7 +164,8 @@ static SV *upgrade_sv(SV *input)
 	return input;
 }
 
-static void upgrade_latin1_pvn(U8 **ptrp, STRLEN *lenp)
+#define upgrade_latin1_pvn(ptrp, lenp) THX_upgrade_latin1_pvn(aTHX_ ptrp, lenp)
+static void THX_upgrade_latin1_pvn(pTHX_ U8 **ptrp, STRLEN *lenp)
 {
 	U8 *ptr = *ptrp;
 	STRLEN len = *lenp;
@@ -734,7 +751,8 @@ static U8 const asciichar_attr[128] = {
 	0xb3, 0xb3, 0xb3, 0x80, 0x80, 0x80, 0x80, 0x80, /* x to DEL */
 };
 
-static int char_is_namestart(U8 *p)
+#define char_is_namestart(p) THX_char_is_namestart(aTHX_ p)
+static int THX_char_is_namestart(pTHX_ U8 *p)
 {
 	U8 c0 = *p;
 	if(!(c0 & 0x80)) return asciichar_attr[c0] & CHARATTR_NAMESTART;
@@ -742,7 +760,8 @@ static int char_is_namestart(U8 *p)
 		uniset_namestart, ARRAY_END(uniset_namestart));
 }
 
-static int char_is_name(U8 *p)
+#define char_is_name(p) THX_char_is_name(aTHX_ p)
+static int THX_char_is_name(pTHX_ U8 *p)
 {
 	U8 c0 = *p;
 	if(!(c0 & 0x80)) return asciichar_attr[c0] & CHARATTR_NAME;
@@ -790,7 +809,8 @@ static int codepoint_is_char(U32 c)
 		nona_codepoint_is_char(c);
 }
 
-static int char_is_char(U8 *p)
+#define char_is_char(p) THX_char_is_char(aTHX_ p)
+static int THX_char_is_char(pTHX_ U8 *p)
 {
 	U8 c0 = *p;
 	if(!(c0 & 0x80)) return asciichar_attr[c0] & CHARATTR_CHAR;
@@ -801,7 +821,8 @@ static int char_is_char(U8 *p)
  * XML node handling
  */
 
-static SV *contentobject_twine(SV *cobj)
+#define contentobject_twine(cobj) THX_contentobject_twine(aTHX_ cobj)
+static SV *THX_contentobject_twine(pTHX_ SV *cobj)
 {
 	AV *twine;
 	SV **item_ptr;
@@ -817,7 +838,8 @@ static SV *contentobject_twine(SV *cobj)
 	return *item_ptr;
 }
 
-static SV *twine_contentobject(SV *tref)
+#define twine_contentobject(tref) THX_twine_contentobject(aTHX_ tref)
+static SV *THX_twine_contentobject(pTHX_ SV *tref)
 {
 	AV *content = newAV();
 	SV *cref = sv_2mortal(newRV_noinc((SV*)content));
@@ -828,7 +850,8 @@ static SV *twine_contentobject(SV *tref)
 	return cref;
 }
 
-static AV *element_nodearray(SV *eref)
+#define element_nodearray(eref) THX_element_nodearray(aTHX_ eref)
+static AV *THX_element_nodearray(pTHX_ SV *eref)
 {
 	AV *earr;
 	if(!SvROK(eref)) throw_data_error("element data isn't an element");
@@ -840,7 +863,8 @@ static AV *element_nodearray(SV *eref)
 	return earr;
 }
 
-static SV *userchardata_chardata(SV *idata)
+#define userchardata_chardata(idata) THX_userchardata_chardata(aTHX_ idata)
+static SV *THX_userchardata_chardata(pTHX_ SV *idata)
 {
 	SV *odata;
 	U8 *p, *end;
@@ -863,7 +887,8 @@ static SV *userchardata_chardata(SV *idata)
 	return odata;
 }
 
-static SV *usertwine_twine(SV *itref)
+#define usertwine_twine(itref) THX_usertwine_twine(aTHX_ itref)
+static SV *THX_usertwine_twine(pTHX_ SV *itref)
 {
 	SV *otref;
 	AV *itwine, *otwine;
@@ -900,7 +925,7 @@ static SV *usertwine_twine(SV *itref)
 			throw_data_error("element data isn't an element");
 		oitem = newRV_inc(elem);
 		SvREADONLY_on(oitem);
-		av_push(otwine, SvREFCNT_inc(oitem));
+		av_push(otwine, oitem);
 	}
 	SvREADONLY_on((SV*)otwine);
 	return otref;
@@ -939,7 +964,8 @@ static SV *usertwine_twine(SV *itref)
 
 /* parse_s(), parse_opt_s(), parse_eq(): return the updated pointer */
 
-static U8 *parse_s(U8 *p)
+#define parse_s(p) THX_parse_s(aTHX_ p)
+static U8 *THX_parse_s(pTHX_ U8 *p)
 {
 	if(!char_is_s(p)) throw_syntax_error(p);
 	do {
@@ -955,7 +981,8 @@ static U8 *parse_opt_s(U8 *p)
 	return p;
 }
 
-static U8 *parse_eq(U8 *p)
+#define parse_eq(p) THX_parse_eq(aTHX_ p)
+static U8 *THX_parse_eq(pTHX_ U8 *p)
 {
 	p = parse_opt_s(p);
 	if(*p != '=') throw_syntax_error(p);
@@ -964,7 +991,8 @@ static U8 *parse_eq(U8 *p)
 
 /* parse_name(): returns the number of octets encoding the name */
 
-static STRLEN parse_name(U8 *p)
+#define parse_name(p) THX_parse_name(aTHX_ p)
+static STRLEN THX_parse_name(pTHX_ U8 *p)
 {
 	U8 *start = p;
 	if(!char_is_namestart(p)) throw_syntax_error(p);
@@ -996,7 +1024,8 @@ static U8 const digit_value[256] = {
 	99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99,
 };
 
-static U32 parse_reference(U8 **pp)
+#define parse_reference(pp) THX_parse_reference(aTHX_ pp)
+static U32 THX_parse_reference(pTHX_ U8 **pp)
 {
 	U8 *p = *pp;
 	U8 c;
@@ -1011,7 +1040,9 @@ static U32 parse_reference(U8 **pp)
 			while(1) {
 				c = digit_value[*++p];
 				if(c > 15) break;
-				if(val & 0xf0000000) throw_wfc_error("invalid character in character reference");
+				if(val & 0xf0000000)
+					throw_wfc_error("invalid character "
+						"in character reference");
 				val = (val<<4) + c;
 			}
 		} else {
@@ -1020,13 +1051,17 @@ static U32 parse_reference(U8 **pp)
 			while(1) {
 				c = digit_value[*++p];
 				if(c > 9) break;
-				if(val >= 100000000) throw_wfc_error("invalid character in character reference");
+				if(val >= 100000000)
+					throw_wfc_error("invalid character "
+						"in character reference");
 				val = val*10 + c;
 			}
 		}
 		if(c != 77) throw_syntax_error(p);
 		p++;
-		if(!codepoint_is_char(val)) throw_wfc_error("invalid character in character reference");
+		if(!codepoint_is_char(val))
+			throw_wfc_error("invalid character "
+				"in character reference");
 	} else if(c == 'l' && p[1] == 't' && p[2] == ';') {
 		p += 3;
 		val = '<';
@@ -1064,7 +1099,9 @@ static U32 parse_reference(U8 **pp)
 #define CHARDATA_RBRBGT_ERR  0x08
 #define CHARDATA_NUL_END     0x10
 
-static U8 *parse_chars(U8 *p, SV *value, U8 endc, U32 flags)
+#define parse_chars(p, value, endc, flags) \
+	THX_parse_chars(aTHX_ p, value, endc, flags)
+static U8 *THX_parse_chars(pTHX_ U8 *p, SV *value, U8 endc, U32 flags)
 {
 	U8 *lstart = p;
 	while(1) {
@@ -1125,7 +1162,8 @@ static U8 *parse_chars(U8 *p, SV *value, U8 endc, U32 flags)
 
 /* parse_comment(), parse_pi(): return updated pointer */
 
-static U8 *parse_comment(U8 *p)
+#define parse_comment(p) THX_parse_comment(aTHX_ p)
+static U8 *THX_parse_comment(pTHX_ U8 *p)
 {
 	if(!(p[0] == '<' && p[1] == '!' && p[2] == '-' && p[3] == '-'))
 		throw_syntax_error(p);
@@ -1141,7 +1179,8 @@ static U8 *parse_comment(U8 *p)
 	return p + 2;
 }
 
-static U8 *parse_pi(U8 *p)
+#define parse_pi(p) THX_parse_pi(aTHX_ p)
+static U8 *THX_parse_pi(pTHX_ U8 *p)
 {
 	STRLEN tgtlen;
 	if(!(p[0] == '<' && p[1] == '?')) throw_syntax_error(p);
@@ -1172,12 +1211,15 @@ static U8 *parse_pi(U8 *p)
 			   CHARDATA_NUL_END)
 #define CONTENT_INSIDE    (CHARDATA_AMP_REF|CHARDATA_RBRBGT_ERR)
 
-static SV *parse_element(U8 **pp);
+#define parse_element(pp) THX_parse_element(aTHX_ pp)
+static SV *THX_parse_element(pTHX_ U8 **pp);
 
-static SV *parse_twine(U8 **pp, U32 chardata_flags)
+#define parse_twine(pp, chardata_flags) \
+	THX_parse_twine(aTHX_ pp, chardata_flags)
+static SV *THX_parse_twine(pTHX_ U8 **pp, U32 chardata_flags)
 {
 	U8 *p = *pp;
-	SV *chardata = newSVpvn("", 0);
+	SV *chardata = newSVpvs("");
 	AV *twine = newAV();
 	SV *tref = sv_2mortal(newRV_noinc((SV*)twine));
 	SvUTF8_on(chardata);
@@ -1208,7 +1250,7 @@ static SV *parse_twine(U8 **pp, U32 chardata_flags)
 		} else {
 			SvREADONLY_on(chardata);
 			av_push(twine, SvREFCNT_inc(parse_element(&p)));
-			chardata = newSVpvn("", 0);
+			chardata = newSVpvs("");
 			SvUTF8_on(chardata);
 			av_push(twine, chardata);
 		}
@@ -1225,7 +1267,9 @@ static SV *parse_twine(U8 **pp, U32 chardata_flags)
    is a reference to an AV which alternates character data and element
    objects) */
 
-static SV *parse_contentobject(U8 **pp, U32 chardata_flags)
+#define parse_contentobject(p, chardata_flags) \
+	THX_parse_contentobject(aTHX_ p, chardata_flags)
+static SV *THX_parse_contentobject(pTHX_ U8 **pp, U32 chardata_flags)
 {
 	return twine_contentobject(parse_twine(pp, chardata_flags));
 }
@@ -1235,7 +1279,7 @@ static SV *parse_contentobject(U8 **pp, U32 chardata_flags)
    type name, the second element is a reference to an HV containing the
    attributes, and the third element is a reference to the content object) */
 
-static SV *parse_element(U8 **pp)
+static SV *THX_parse_element(pTHX_ U8 **pp)
 {
 	U8 *p = *pp;
 	U8 *typename_start, *namestart;
@@ -1276,7 +1320,7 @@ static SV *parse_element(U8 **pp)
 		p = parse_eq(p);
 		c = *p;
 		if(c != '"' && c != '\'') throw_syntax_error(p);
-		attval = sv_2mortal(newSVpvn("", 0));
+		attval = sv_2mortal(newSVpvs(""));
 		SvUTF8_on(attval);
 		p = parse_chars(p+1, attval, c,
 			CHARDATA_AMP_REF|CHARDATA_LT_ERR|CHARDATA_S_LINEAR)
@@ -1318,7 +1362,9 @@ static SV *parse_element(U8 **pp)
 #define XMLDECL_ENCODING    0x02
 #define XMLDECL_STANDALONE  0x03
 
-static U8 *parse_opt_xmldecl(U8 *p, U32 allow, U32 require)
+#define parse_opt_xmldecl(p, allow, require) \
+	THX_parse_opt_xmldecl(aTHX_ p, allow, require)
+static U8 *THX_parse_opt_xmldecl(pTHX_ U8 *p, U32 allow, U32 require)
 {
 #if 0 /* unused, because throw_syntax_error() ignores its argument */
 	U8 *start = p;
@@ -1389,7 +1435,8 @@ static U8 *parse_opt_xmldecl(U8 *p, U32 allow, U32 require)
 
 /* parse_misc_seq(): returns updated pointer */
 
-static U8 *parse_misc_seq(U8 *p)
+#define parse_misc_seq(p) THX_parse_misc_seq(aTHX_ p)
+static U8 *THX_parse_misc_seq(pTHX_ U8 *p)
 {
 	while(1) {
 		U8 c = p[0];
@@ -1418,7 +1465,8 @@ static U8 *parse_misc_seq(U8 *p)
  * the textual form of the item in question.
  */
 
-static void check_encname(SV *enc)
+#define check_encname(enc) THX_check_encname(aTHX_ enc)
+static void THX_check_encname(pTHX_ SV *enc)
 {
 	U8 *p, *end;
 	STRLEN len;
@@ -1435,7 +1483,8 @@ static void check_encname(SV *enc)
 	}
 }
 
-static int is_name(U8 *p, STRLEN len)
+#define is_name(p, len) THX_is_name(aTHX_ p, len)
+static int THX_is_name(pTHX_ U8 *p, STRLEN len)
 {
 	U8 *end = p + len;
 	if(!char_is_namestart(p)) return 0;
@@ -1448,7 +1497,8 @@ static int is_name(U8 *p, STRLEN len)
 
 static U8 const hexdig[16] = "0123456789abcdef";
 
-static void serialise_chardata(SV *out, SV *data)
+#define serialise_chardata(out, data) THX_serialise_chardata(aTHX_ out, data)
+static void THX_serialise_chardata(pTHX_ SV *out, SV *data)
 {
 	STRLEN datalen;
 	U8 *datastart, *dataend, *p, *lstart;
@@ -1483,9 +1533,11 @@ static void serialise_chardata(SV *out, SV *data)
 	if(lstart != p) sv_catpvn_nomg(out, (char*)lstart, p-lstart);
 }
 
-static void serialise_element(SV *out, SV *elem);
+#define serialise_element(out, elem) THX_serialise_element(aTHX_ out, elem)
+static void THX_serialise_element(pTHX_ SV *out, SV *elem);
 
-static void serialise_twine(SV *out, SV *tref)
+#define serialise_twine(out, tref) THX_serialise_twine(aTHX_ out, tref)
+static void THX_serialise_twine(pTHX_ SV *out, SV *tref)
 {
 	AV *twine;
 	I32 clen, i;
@@ -1511,12 +1563,16 @@ static void serialise_twine(SV *out, SV *tref)
 	}
 }
 
-static void serialise_contentobject(SV *out, SV *cref)
+#define serialise_contentobject(out, cref) \
+	THX_serialise_contentobject(aTHX_ out, cref)
+static void THX_serialise_contentobject(pTHX_ SV *out, SV *cref)
 {
 	serialise_twine(out, contentobject_twine(cref));
 }
 
-static void serialise_eithercontent(SV *out, SV *cref)
+#define serialise_eithercontent(out, cref) \
+	THX_serialise_eithercontent(aTHX_ out, cref)
+static void THX_serialise_eithercontent(pTHX_ SV *out, SV *cref)
 {
 	SV *tgt;
 	if(SvROK(cref) && (tgt = SvRV(cref), SvTYPE(tgt) == SVt_PVAV) &&
@@ -1527,7 +1583,8 @@ static void serialise_eithercontent(SV *out, SV *cref)
 	}
 }
 
-static int twine_is_empty(SV *tref)
+#define twine_is_empty(tref) THX_twine_is_empty(aTHX_ tref)
+static int THX_twine_is_empty(pTHX_ SV *tref)
 {
 	AV *twine;
 	SV **item_ptr;
@@ -1543,7 +1600,8 @@ static int twine_is_empty(SV *tref)
 	return SvCUR(item) == 0;
 }
 
-static int content_is_empty(SV *cref)
+#define content_is_empty(cref) THX_content_is_empty(aTHX_ cref)
+static int THX_content_is_empty(pTHX_ SV *cref)
 {
 	AV *twine;
 	SV **item_ptr;
@@ -1557,7 +1615,8 @@ static int content_is_empty(SV *cref)
 	return twine_is_empty(*item_ptr);
 }
 
-static void serialise_attvalue(SV *out, SV *data)
+#define serialise_attvalue(out, data) THX_serialise_attvalue(aTHX_ out, data)
+static void THX_serialise_attvalue(pTHX_ SV *out, SV *data)
 {
 	STRLEN datalen;
 	U8 *datastart, *dataend, *p, *lstart;
@@ -1591,7 +1650,7 @@ static void serialise_attvalue(SV *out, SV *data)
 	if(lstart != p) sv_catpvn_nomg(out, (char*)lstart, p-lstart);
 }
 
-static void serialise_element(SV *out, SV *eref)
+static void THX_serialise_element(pTHX_ SV *out, SV *eref)
 {
 	AV *earr;
 	SV **item_ptr;
@@ -1601,7 +1660,7 @@ static void serialise_element(SV *out, SV *eref)
 	STRLEN typename_len;
 	U32 nattrs;
 	earr = element_nodearray(eref);
-	sv_catpvn_nomg(out, "<", 1);
+	sv_catpvs_nomg(out, "<");
 	item_ptr = av_fetch(earr, 0, 0);
 	if(!item_ptr) throw_data_error("element type name isn't a string");
 	typename = *item_ptr;
@@ -1625,15 +1684,15 @@ static void serialise_element(SV *out, SV *eref)
 			STRLEN klen;
 			U8 *key;
 			HE *ent = hv_iternext(ahash);
-			sv_catpvn_nomg(out, " ", 1);
+			sv_catpvs_nomg(out, " ");
 			key = (U8*)HePV(ent, klen);
 			if(!HeKUTF8(ent)) upgrade_latin1_pvn(&key, &klen);
 			if(!is_name(key, klen))
 				throw_data_error("illegal attribute name");
 			sv_catpvn_nomg(out, (char*)key, klen);
-			sv_catpvn_nomg(out, "=\"", 2);
+			sv_catpvs_nomg(out, "=\"");
 			serialise_attvalue(out, HeVAL(ent));
-			sv_catpvn_nomg(out, "\"", 1);
+			sv_catpvs_nomg(out, "\"");
 		} else {
 			U32 i;
 			AV *keys = newAV();
@@ -1650,18 +1709,18 @@ static void serialise_element(SV *out, SV *eref)
 				SV *keysv;
 				STRLEN klen;
 				U8 *key;
-				sv_catpvn_nomg(out, " ", 1);
+				sv_catpvs_nomg(out, " ");
 				keysv = *av_fetch(keys, i, 0);
 				key = (U8*)SvPV(keysv, klen);
 				if(!is_name(key, klen))
 					throw_data_error("illegal attribute "
 							 "name");
 				sv_catpvn_nomg(out, (char*)key, klen);
-				sv_catpvn_nomg(out, "=\"", 2);
+				sv_catpvs_nomg(out, "=\"");
 				serialise_attvalue(out,
 					*hv_fetch(ahash, (char*)key, -klen,
 						0));
-				sv_catpvn_nomg(out, "\"", 1);
+				sv_catpvs_nomg(out, "\"");
 			}
 		}
 	}
@@ -1669,13 +1728,13 @@ static void serialise_element(SV *out, SV *eref)
 	if(!item_ptr) throw_data_error("content data isn't a content chunk");
 	content = *item_ptr;
 	if(content_is_empty(content)) {
-		sv_catpvn_nomg(out, "/>", 2);
+		sv_catpvs_nomg(out, "/>");
 	} else {
-		sv_catpvn_nomg(out, ">", 1);
+		sv_catpvs_nomg(out, ">");
 		serialise_contentobject(out, content);
-		sv_catpvn_nomg(out, "</", 2);
+		sv_catpvs_nomg(out, "</");
 		sv_catpvn_nomg(out, (char*)typename_start, typename_len);
-		sv_catpvn_nomg(out, ">", 1);
+		sv_catpvs_nomg(out, ">");
 	}
 }
 
@@ -1683,8 +1742,8 @@ MODULE = XML::Easy PACKAGE = XML::Easy::Content
 
 BOOT:
 	/* stash stashes */
-	stash_content = gv_stashpv("XML::Easy::Content", 1);
-	stash_element = gv_stashpv("XML::Easy::Element", 1);
+	stash_content = gv_stashpvs("XML::Easy::Content", 1);
+	stash_element = gv_stashpvs("XML::Easy::Element", 1);
 	/* stash shared empty-content object */
 	{
 		SV *chardata;
@@ -1692,7 +1751,7 @@ BOOT:
 		SV *tref;
 		AV *content;
 		SV *cref;
-		chardata = newSVpvn("", 0);
+		chardata = newSVpvs("");
 		SvREADONLY_on(chardata);
 		twine = newAV();
 		av_push(twine, chardata);
@@ -2019,7 +2078,7 @@ SV *
 xml10_write_content(SV *cont)
 PROTOTYPE: $
 CODE:
-	RETVAL = sv_2mortal(newSVpvn("", 0));
+	RETVAL = sv_2mortal(newSVpvs(""));
 	SvUTF8_on(RETVAL);
 	serialise_eithercontent(RETVAL, cont);
 	SvREFCNT_inc(RETVAL);
@@ -2030,7 +2089,7 @@ SV *
 xml10_write_element(SV *elem)
 PROTOTYPE: $
 CODE:
-	RETVAL = sv_2mortal(newSVpvn("", 0));
+	RETVAL = sv_2mortal(newSVpvs(""));
 	SvUTF8_on(RETVAL);
 	serialise_element(RETVAL, elem);
 	SvREFCNT_inc(RETVAL);
@@ -2041,18 +2100,18 @@ SV *
 xml10_write_document(SV *elem, SV *enc = &PL_sv_undef)
 PROTOTYPE: $;$
 CODE:
-	RETVAL = sv_2mortal(newSVpvn("<?xml version=\"1.0\"", 19));
+	RETVAL = sv_2mortal(newSVpvs("<?xml version=\"1.0\""));
 	SvUTF8_on(RETVAL);
 	if(SvOK(enc) || SvTYPE(enc) == SVt_PVGV) {
 		check_encname(enc);
-		sv_catpvn_nomg(RETVAL, " encoding=\"", 11);
+		sv_catpvs_nomg(RETVAL, " encoding=\"");
 		sv_catsv_nomg(RETVAL, enc);
-		sv_catpvn_nomg(RETVAL, "\" standalone=\"yes\"?>\n", 21);
+		sv_catpvs_nomg(RETVAL, "\" standalone=\"yes\"?>\n");
 	} else {
-		sv_catpvn_nomg(RETVAL, " standalone=\"yes\"?>\n", 20);
+		sv_catpvs_nomg(RETVAL, " standalone=\"yes\"?>\n");
 	}
 	serialise_element(RETVAL, elem);
-	sv_catpvn_nomg(RETVAL, "\n", 1);
+	sv_catpvs_nomg(RETVAL, "\n");
 	SvREFCNT_inc(RETVAL);
 OUTPUT:
 	RETVAL
@@ -2061,13 +2120,13 @@ SV *
 xml10_write_extparsedent(SV *cont, SV *enc = &PL_sv_undef)
 PROTOTYPE: $;$
 CODE:
-	RETVAL = sv_2mortal(newSVpvn("", 0));
+	RETVAL = sv_2mortal(newSVpvs(""));
 	SvUTF8_on(RETVAL);
 	if(SvOK(enc) || SvTYPE(enc) == SVt_PVGV) {
 		check_encname(enc);
-		sv_catpvn_nomg(RETVAL, "<?xml encoding=\"", 16);
+		sv_catpvs_nomg(RETVAL, "<?xml encoding=\"");
 		sv_catsv_nomg(RETVAL, enc);
-		sv_catpvn_nomg(RETVAL, "\"?>", 3);
+		sv_catpvs_nomg(RETVAL, "\"?>");
 	}
 	serialise_eithercontent(RETVAL, cont);
 	SvREFCNT_inc(RETVAL);

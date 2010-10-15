@@ -4,7 +4,6 @@ author:
   - 'Andrew Main (Zefram) <zefram@fysh.org>'
 build_requires:
   Encode: 0
-  ExtUtils::CBuilder: 0
   IO::File: 0
   Module::Build: 0
   Params::Classify: 0
@@ -17,6 +16,8 @@ build_requires:
 configure_requires:
   Module::Build: 0
   perl: 5.008
+  strict: 0
+  warnings: 0
 distribution_type: module
 dynamic_config: 1
 generated_by: 'Module::Build version 0.3607'
@@ -28,25 +29,25 @@ name: XML-Easy
 provides:
   XML::Easy:
     file: lib/XML/Easy.pm
-    version: 0.006
+    version: 0.007
   XML::Easy::Classify:
     file: lib/XML/Easy/Classify.pm
-    version: 0.006
+    version: 0.007
   XML::Easy::Content:
     file: lib/XML/Easy/Content.pm
-    version: 0.006
+    version: 0.007
   XML::Easy::Element:
     file: lib/XML/Easy/Element.pm
-    version: 0.006
+    version: 0.007
   XML::Easy::NodeBasics:
     file: lib/XML/Easy/NodeBasics.pm
-    version: 0.006
+    version: 0.007
   XML::Easy::Syntax:
     file: lib/XML/Easy/Syntax.pm
-    version: 0.006
+    version: 0.007
   XML::Easy::Text:
     file: lib/XML/Easy/Text.pm
-    version: 0.006
+    version: 0.007
 recommends:
   Internals: 0
   XSLoader: 0
@@ -59,4 +60,4 @@ requires:
   warnings: 0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.006
+version: 0.007

@@ -57,10 +57,10 @@ package XML::Easy::Text;
 use warnings;
 use strict;
 
-use XML::Easy::Content 0.001 ();
-use XML::Easy::Element 0.001 ();
+use XML::Easy::Content 0.007 ();
+use XML::Easy::Element 0.007 ();
 
-our $VERSION = "0.006";
+our $VERSION = "0.007";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(

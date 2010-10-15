@@ -105,6 +105,10 @@ Provides a way to construct XML data nodes by procedural code.
 Some programmers will find this more comfortable than the functional
 style offered by L<XML::Easy::NodeBasics>.
 
+=item L<XML::Easy::SimpleSchemaUtil>
+
+Helps to parse things that are encoded in XML in common ways.
+
 =item C<XML::Easy::Transform::>
 
 This namespace exists to contain modules that perform transformations
@@ -121,7 +125,7 @@ package XML::Easy;
 use warnings;
 use strict;
 
-our $VERSION = "0.006";
+our $VERSION = "0.007";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(

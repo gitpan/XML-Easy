@@ -90,8 +90,8 @@ use XML::Easy::Classify 0.001 qw(
 	is_xml_content_object check_xml_content_object
 	is_xml_element check_xml_element
 );
-use XML::Easy::Content 0.001 ();
-use XML::Easy::Element 0.001 ();
+use XML::Easy::Content 0.007 ();
+use XML::Easy::Element 0.007 ();
 
 BEGIN {
 	if(eval { local $SIG{__DIE__};
@@ -104,7 +104,7 @@ BEGIN {
 	}
 }
 
-our $VERSION = "0.006";
+our $VERSION = "0.007";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(
@@ -544,6 +544,7 @@ L<XML::Easy::Classify>,
 L<XML::Easy::Content>,
 L<XML::Easy::Element>,
 L<XML::Easy::ProceduralWriter>,
+L<XML::Easy::SimpleSchemaUtil>,
 L<XML::Easy::Text>
 
 =head1 AUTHOR

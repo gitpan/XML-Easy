@@ -1,3 +1,34 @@
+version 0.007; 2010-10-15
+
+  * bugfix: avoid memory leak in construction of content objects
+
+  * in XS, use newSVpvs(), sv_catpvs_nomg(), and gv_stashpvs() wherever
+    appropriate
+
+  * in XS, use PERL_NO_GET_CONTEXT for efficiency
+
+  * use full stricture in test suite
+
+  * also test POD coverage of pure Perl implementation
+
+  * in test suite, make all numeric comparisons against $] stringify it
+    first, to avoid architecture-dependent problems with floating point
+    rounding giving it an unexpected numeric value
+
+  * in Build.PL, explicitly set needs_compiler to avoid bogus
+    auto-dependency on ExtUtils::CBuilder
+
+  * list XML::Easy::SimpleSchemaUtil and
+    XML::Easy::Transform::RationalizeNamespacePrefixes in documentation's
+    lists of other distributions
+
+  * in Build.PL, complete declaration of configure-time requirements
+
+  * move declaration of $VERSION in XML::Easy::Syntax to match all
+    other modules
+
+  * slightly reformat some C code to avoid exceeding 80 columns
+
 version 0.006; 2010-05-20
 
   * bugfix: in XS, check SvOBJECT before looking at SvSTASH, because

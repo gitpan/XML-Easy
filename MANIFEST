@@ -26,6 +26,7 @@ t/node_basics_pp.t
 t/node_object.t
 t/node_object_pp.t
 t/pod_cvg.t
+t/pod_cvg_pp.t
 t/pod_syn.t
 t/read.data
 t/read.t

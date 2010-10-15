@@ -50,9 +50,9 @@ package XML::Easy::Element;
 use warnings;
 use strict;
 
-use XML::Easy::Content 0.001 ();
+use XML::Easy::Content 0.007 ();
 
-our $VERSION = "0.006";
+our $VERSION = "0.007";
 
 eval { local $SIG{__DIE__};
 	require XSLoader;
@@ -84,7 +84,7 @@ __DATA__
 package XML::Easy::Element;
 
 use Params::Classify 0.000 qw(is_string is_ref);
-use XML::Easy::Classify qw(check_xml_attributes check_xml_content_object);
+use XML::Easy::Classify 0.001 qw(check_xml_attributes check_xml_content_object);
 use XML::Easy::Syntax 0.000 qw($xml10_name_rx);
 
 BEGIN {

@@ -26,6 +26,19 @@ These nodes, of course, contain subordinate nodes, according to the
 structure of the XML data.  A reference to the top node is all that is
 required to effectively pass the whole document.
 
+=head1 OTHER DISTRIBUTIONS
+
+CPAN distributions under this namespace are:
+
+=over
+
+=item L<XML::Easy::Transform::RationalizeNamespacePrefixes>
+
+Manages XML Namespaces by hoisting all namespace declarations to the
+root of a document.
+
+=back
+
 =head1 SEE ALSO
 
 L<XML::Easy>

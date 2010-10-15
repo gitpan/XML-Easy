@@ -26,6 +26,8 @@ package XML::Easy::Syntax;
 use warnings;
 use strict;
 
+our $VERSION = "0.007";
+
 use parent "Exporter";
 our @EXPORT_OK = qw(
 	$xml10_char_rx $xml10_s_rx $xml10_eq_rx
@@ -44,8 +46,6 @@ our @EXPORT_OK = qw(
 	$xml10_misc_rx $xml10_miscseq_rx
 	$xml10_prolog_xdtd_rx $xml10_document_xdtd_rx $xml10_extparsedent_rx
 );
-
-our $VERSION = "0.006";
 
 sub _charclass_regexp($) {
 	my($class) = @_;

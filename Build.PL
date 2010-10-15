@@ -39,6 +39,8 @@ Module::Build->subclass(code => q{
 	configure_requires => {
 		"Module::Build" => 0,
 		"perl" => "5.008",
+		"strict" => 0,
+		"warnings" => 0,
 	},
 	configure_recommends => {
 		"ExtUtils::CBuilder" => "0.15",
@@ -70,6 +72,7 @@ Module::Build->subclass(code => q{
 		"Internals" => 0,
 		"XSLoader" => 0,
 	},
+	needs_compiler => 0,
 	dynamic_config => 1,
 	meta_add => { distribution_type => "module" },
 	create_makefile_pl => "passthrough",
