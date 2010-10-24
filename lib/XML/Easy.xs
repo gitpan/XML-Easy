@@ -1740,6 +1740,8 @@ static void THX_serialise_element(pTHX_ SV *out, SV *eref)
 
 MODULE = XML::Easy PACKAGE = XML::Easy::Content
 
+PROTOTYPES: DISABLE
+
 BOOT:
 	/* stash stashes */
 	stash_content = gv_stashpvs("XML::Easy::Content", 1);
@@ -1770,6 +1772,7 @@ BOOT:
 SV *
 new(SV *classname, SV *tref)
 CODE:
+	PERL_UNUSED_VAR(classname);
 	RETVAL = twine_contentobject(usertwine_twine(tref));
 	SvREFCNT_inc(RETVAL);
 OUTPUT:
@@ -1795,6 +1798,7 @@ PREINIT:
 	SV *tgt;
 	AV *earr;
 CODE:
+	PERL_UNUSED_VAR(classname);
 	if(!sv_is_string(type_name))
 		throw_data_error("element type name isn't a string");
 	type_name = sv_mortalcopy(type_name);

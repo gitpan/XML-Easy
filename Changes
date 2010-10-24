@@ -1,3 +1,14 @@
+version 0.008; 2010-10-24
+
+  * in XS, declare "PROTOTYPES: DISABLE" to prevent automatic generation
+    of unintended prototypes
+
+  * jump through hoops to avoid compiler warnings
+
+  * in t/setup_pp.pl, avoid a warning and consequent false test failure
+    that occurs if XSLoader::load() is given no arguments, which is now
+    a valid usage
+
 version 0.007; 2010-10-15
 
   * bugfix: avoid memory leak in construction of content objects
