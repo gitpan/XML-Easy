@@ -18,9 +18,8 @@ configure_requires:
   perl: 5.008
   strict: 0
   warnings: 0
-distribution_type: module
-dynamic_config: 1
-generated_by: 'Module::Build version 0.3607'
+dynamic_config: 0
+generated_by: 'Module::Build version 0.38, CPAN::Meta::Converter version 2.112621'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -29,25 +28,25 @@ name: XML-Easy
 provides:
   XML::Easy:
     file: lib/XML/Easy.pm
-    version: 0.008
+    version: 0.009
   XML::Easy::Classify:
     file: lib/XML/Easy/Classify.pm
-    version: 0.008
+    version: 0.009
   XML::Easy::Content:
     file: lib/XML/Easy/Content.pm
-    version: 0.008
+    version: 0.009
   XML::Easy::Element:
     file: lib/XML/Easy/Element.pm
-    version: 0.008
+    version: 0.009
   XML::Easy::NodeBasics:
     file: lib/XML/Easy/NodeBasics.pm
-    version: 0.008
+    version: 0.009
   XML::Easy::Syntax:
     file: lib/XML/Easy/Syntax.pm
-    version: 0.008
+    version: 0.009
   XML::Easy::Text:
     file: lib/XML/Easy/Text.pm
-    version: 0.008
+    version: 0.009
 recommends:
   Internals: 0
   XSLoader: 0
@@ -60,4 +59,4 @@ requires:
   warnings: 0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.008
+version: 0.009

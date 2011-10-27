@@ -73,7 +73,7 @@ Module::Build->subclass(code => q{
 		"XSLoader" => 0,
 	},
 	needs_compiler => 0,
-	dynamic_config => 1,
+	dynamic_config => 0,
 	meta_add => { distribution_type => "module" },
 	create_makefile_pl => "passthrough",
 	sign => 1,

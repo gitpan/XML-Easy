@@ -1597,7 +1597,7 @@ static int THX_twine_is_empty(pTHX_ SV *tref)
 	if(!item_ptr) return 0;
 	item = *item_ptr;
 	if(!SvOK(item) || SvROK(item)) return 0;
-	return SvCUR(item) == 0;
+	return SvPOK(item) && SvCUR(item) == 0;
 }
 
 #define content_is_empty(cref) THX_content_is_empty(aTHX_ cref)

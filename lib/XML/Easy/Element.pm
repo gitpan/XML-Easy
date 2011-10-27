@@ -52,7 +52,7 @@ use strict;
 
 use XML::Easy::Content 0.007 ();
 
-our $VERSION = "0.008";
+our $VERSION = "0.009";
 
 eval { local $SIG{__DIE__};
 	require XSLoader;
@@ -239,7 +239,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 Copyright (C) 2008, 2009 PhotoBox Ltd
 
-Copyright (C) 2009, 2010 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2009, 2010, 2011 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
 

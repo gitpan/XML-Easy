@@ -59,7 +59,7 @@ use Params::Classify 0.000 qw(is_string is_ref is_strictly_blessed);
 use XML::Easy::Syntax 0.000
 	qw($xml10_char_rx $xml10_name_rx $xml10_encname_rx);
 
-our $VERSION = "0.008";
+our $VERSION = "0.009";
 
 use parent "Exporter";
 our @EXPORT_OK = qw(
@@ -106,7 +106,7 @@ sub is_xml_name($) {
 }
 
 sub check_xml_name($) {
-	_throw_data_error("name isn't a string") unless &is_string;
+	_throw_data_error("name isn't a string") unless is_string($_[0]);
 	no warnings "utf8";
 	_throw_data_error("illegal name")
 		unless $_[0] =~ /\A$xml10_name_rx\z/o;
@@ -128,7 +128,7 @@ sub is_xml_encname($) {
 
 sub check_xml_encname($) {
 	_throw_data_error("encoding name isn't a string")
-		unless &is_string;
+		unless is_string($_[0]);
 	no warnings "utf8";
 	_throw_data_error("illegal encoding name")
 		unless $_[0] =~ /\A$xml10_encname_rx\z/o;
@@ -152,7 +152,7 @@ sub is_xml_chardata($) {
 
 sub check_xml_chardata($) {
 	_throw_data_error("character data isn't a string")
-		unless &is_string;
+		unless is_string($_[0]);
 	no warnings "utf8";
 	_throw_data_error("character data contains illegal character")
 		unless $_[0] =~ /\A$xml10_char_rx*\z/o;
@@ -306,7 +306,7 @@ Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 COPYRIGHT
 
-Copyright (C) 2009, 2010 Andrew Main (Zefram) <zefram@fysh.org>
+Copyright (C) 2009, 2010, 2011 Andrew Main (Zefram) <zefram@fysh.org>
 
 =head1 LICENSE
 

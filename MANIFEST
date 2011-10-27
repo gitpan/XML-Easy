@@ -1,11 +1,11 @@
-.cvsignore
+.gitignore
 Build.PL
 Changes
 MANIFEST
+META.json
 META.yml
 Makefile.PL
 README
-lib/XML/.cvsignore
 lib/XML/Easy.pm
 lib/XML/Easy.xs
 lib/XML/Easy/Classify.pm
